@@ -1,0 +1,103 @@
+#!/usr/bin/env cwl-runner
+
+class: Workflow
+
+inputs:
+  - id: "#normal_bam_path"
+    type: File
+  - id: "#tumor_bam_path"
+    type: File
+  - id: "#known_snp_vcf_path"
+    type: File
+  - id: "#reference_fasta_path"
+    type: File
+  - id: "#reference_fasta_fai"
+    type: File
+  - id: "#reference_fasta_dict"
+    type: File
+  - id: "#cosmic_path"
+    type: File
+  - id: "#Parallel_Block_Size"
+    type: string
+  - id: "#contEst"
+    type: string
+  - id: "#thread_count"
+    type: string
+  - id: "#case_id"
+    type: string
+  - id: "#normal_id"
+    type: string
+  - id: "#tumor_id"
+    type: string
+  - id: "#output_vcf"
+    type: string
+  - id: "#postgres_config"
+    type: File
+
+outputs:
+
+  - id: "#mutect2-vc_srt_vcf"
+    type: File
+    source: "#picard-sortvcf.srt_vcf"
+  - id: "#picard-sortvcf_log"
+    type: File
+    source: "#picard-sortvcf.log"
+  - id: "#mutect2-vc-tool_log"
+    type: File
+    source: "#mutect2-vc-tool.log"
+
+
+steps:
+
+  - id: "#mutect2-vc-tool"
+    run: {import: ../tools/mutect2-vc-tool.cwl.yaml}
+    inputs:
+      - id: "#mutect2-vc-tool.normal_bam_path"
+        source: "#normal_bam_path"
+      - id: "#mutect2-vc-tool.tumor_bam_path"
+        source: "#tumor_bam_path"
+      - id: "#mutect2-vc-tool.known_snp_vcf_path"
+        source: "#known_snp_vcf_path"
+      - id: "#mutect2-vc-tool.reference_fasta_path"
+        source: "#reference_fasta_path"
+      - id: "#mutect2-vc-tool.reference_fasta_fai"
+        source: "#reference_fasta_fai"
+      - id: "#mutect2-vc-tool.cosmic_path"
+        source: "#cosmic_path"
+      - id: "#mutect2-vc-tool.contEst"
+        source: "#contEst"
+      - id: "#mutect2-vc-tool.normal_bam_path"
+        source: "#normal_bam_path"
+      - id: "#mutect2-vc-tool.thread_count"
+        source: "#thread_count"
+      - id: "#mutect2-vc-tool.case_id"
+        source: "#case_id"
+      - id: "#mutect2-vc-tool.normal_id"
+        source: "#normal_id"
+      - id: "#mutect2-vc-tool.tumor_id"
+        source: "#tumor_id"
+      - id: "#mutect2-vc-tool.postgres_config"
+        source: "#postgres_config"
+
+    outputs:
+      - id: "#mutect2-vc-tool.out_vc_vcf"
+      - id: "#mutect2-vc-tool.output_list"
+      - id: "#mutect2-vc-tool.log"
+
+  - id: "#picard-sortvcf"
+    run: {import: ../tools/picard-sortvcf.cwl.yaml}
+    inputs:
+      - id: "#picard-sortvcf.vcf_path"
+        source: "#mutect2-vc-tool.out_vc_vcf"
+      - id: "#picard-sortvcf.reference_fasta_dict"
+        source: "#reference_fasta_dict"
+      - id: "#picard-sortvcf.case_id"
+        source: "#case_id"
+      - id: "#picard-sortvcf.postgres_config"
+        source: "#postgres_config"
+      - id: "#picard-sortvcf.output_vcf"
+        source: "#output_vcf"
+
+    outputs:
+      - id: "#picard-sortvcf.srt_vcf"
+      - id: "#picard-sortvcf.log"
