@@ -36,6 +36,10 @@ wkdir=`sudo mktemp -d -t mutect.XXXXXXXXXX -p /mnt/SCRATCH/` \
 --case_id $case_id \
 --basedir $wkdir \
 --s3dir $s3dir \
---cwl $wkdir/mutect-cwl/workflows/mutect-wxs-workflow.cwl.yaml
+--cwl $wkdir/mutect-cwl/workflows/mutect2-vc-workflow.cwl.yaml
 
-sudo rm -rf $wkdir
+trap cleanup EXIT
+function cleanup (){
+    echo "cleanup tmp data";
+    sudo rm -rf $wkdir;
+}
