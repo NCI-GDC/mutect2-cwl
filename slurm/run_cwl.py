@@ -157,7 +157,7 @@ if __name__ == "__main__":
             "--tmpdir-prefix", inp,
             "--tmp-outdir-prefix", workdir,
             args.cwl,
-            "--reference_fasta_path", reference_fasta_name,
+            "--reference_fasta_path", reference_fasta_path,
             "--reference_fasta_fai", reference_fasta_fai,
             "--reference_fasta_dict", reference_fasta_dict,
             "--cosmic_path", cosmic_path,

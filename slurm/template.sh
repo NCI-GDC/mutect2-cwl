@@ -2,7 +2,7 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=XX_THREAD_COUNT_XX
 #SBATCH --ntasks=1
-#SBATCH --mem=18000
+#SBATCH --mem=24000
 #SBATCH --workdir="/mnt/SCRATCH/"
 
 refdir="XX_REFDIR_XX"
