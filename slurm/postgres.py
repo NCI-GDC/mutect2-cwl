@@ -17,7 +17,7 @@ class ToolTypeMixin(object):
     case_id = Column(String)
     datetime_now = Column(String)
     vcf_id = Column(String)
-    files = Column(String)
+    files = Column(ARRAY(String))
     elapsed = Column(String)
     thread_count = Column(String)
     status = Column(String)

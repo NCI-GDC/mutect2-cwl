@@ -25,9 +25,9 @@ class ToolTypeMixin(object):
         return "<ToolTypeMixin(case_id='%s', status='%s' , location='%s'>" %(self.case_id,
                 self.status, self.location)
 
-class MuTect(ToolTypeMixin, Base):
+class MUTECT(ToolTypeMixin, Base):
 
-    __tablename__ = 'mutect2_vc_status'
+    __tablename__ = 'mutect2_status'
 
 
 def db_connect(database):
@@ -50,11 +50,12 @@ def add_status(engine, case_id, vcf_id, file_ids, status, output_location):
     Session.configure(bind=engine)
     session = Session()
 
-    met = MuTect(case_id = case_id,
-                 vcf_id = vcf_id,
-                 files = file_ids,
-                 status = status,
-                 location = output_location)
+
+    met = MUTECT(case_id = case_id,
+               vcf_id = vcf_id,
+               files = file_ids,
+               status = status,
+               location = output_location)
 
     create_table(engine, met)
     session.add(met)

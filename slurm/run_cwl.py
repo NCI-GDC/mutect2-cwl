@@ -17,7 +17,7 @@ def update_postgres(exit, cwl_failure, vcf_upload_location, mutect_location, log
     loc = 'UNKNOWN'
     status = 'UNKNOWN'
 
-    if sum(exit) == 0:
+    if exit == 0:
 
         loc = vcf_upload_location
 
@@ -46,19 +46,6 @@ def update_postgres(exit, cwl_failure, vcf_upload_location, mutect_location, log
 
     return(status, loc)
 
-def upload_all_output(localdir, remotedir, logger, config):
-    """ upload output files to object store """
-
-    all_exit_code = list()
-
-    for filename in os.listdir(localdir):
-        localfilepath = os.path.join(localdir, filename)
-        remotefilepath = os.path.join(remotedir, filename)
-        exit_code = pipelineUtil.upload_to_cleversafe(logger, remotefilepath, localfilepath, config)
-        all_exit_code.append(exit_code)
-
-    return all_exit_code
-
 def is_nat(x):
     '''
     Checks that a value is a natural number.
@@ -69,12 +56,13 @@ def is_nat(x):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Run mutect2 variant calling CWL")
+    parser = argparse.ArgumentParser(description="Run mutect variant calling CWL")
     required = parser.add_argument_group("Required input parameters")
     required.add_argument("--refdir", help="path to reference dir on object store")
     required.add_argument("--block", type=is_nat, default=50000000, help="parallel block size")
     required.add_argument('--thread_count', type=is_nat, default=8, help='thread count')
-    required.add_argument("--contEst", default="0.02", help="contamination estimation value", required=True)
+    required.add_argument('--java_heap', default=None, help='java heap')
+    required.add_argument('--contEst', default=None, help='Contamination Estimation')
 
     required.add_argument("--normal", default=None, help="path to normal bam file")
     required.add_argument("--tumor", default=None, help="path to tumor bam file")
@@ -97,7 +85,7 @@ if __name__ == "__main__":
     casedir = tempfile.mkdtemp(prefix="mutect_%s_" %args.case_id, dir=args.basedir)
     workdir = tempfile.mkdtemp(prefix="workdir_", dir=casedir)
     inp = tempfile.mkdtemp(prefix="input_", dir=casedir)
-    index = tempfile.mkdtemp(prefix="index_", dir=casedir)
+    index = args.refdir
 
     #generate a random uuid
     vcf_uuid = uuid.uuid4()
@@ -122,32 +110,28 @@ if __name__ == "__main__":
 
     #download
     logger.info("getting refs")
-    pipelineUtil.download_from_cleversafe(logger, args.refdir, index, "/home/ubuntu/.s3cfg")
     reference_fasta_path = os.path.join(index,"GRCh38.d1.vd1.fa")
     reference_fasta_fai = os.path.join(index,"GRCh38.d1.vd1.fa.fai")
     reference_fasta_dict = os.path.join(index,"GRCh38.d1.vd1.dict")
-    known_snp_vcf_path = os.path.join(index,"dbsnp_144.grch38.vcf")
-    cosmic_path = os.path.join(index,"CosmicCombined.srt.vcf")
+    pon_path = os.path.join(index, "MuTect2.PON.4982.noformat.vcf.gz")
     postgres_config = os.path.join(index,"postgres_config")
-    s3cfg_ceph = os.path.join(index,"s3cfg_ceph")
-    s3cfg_cleversafe = os.path.join(index,"s3cfg_cleversafe")
 
     logger.info("getting normal bam")
     normal_path = os.path.dirname(args.normal)+'/'
     if normal_path.startswith("s3://ceph_"):
-        pipelineUtil.download_from_cleversafe(logger, normal_path, inp, s3cfg_ceph)
+        pipelineUtil.download_from_cleversafe(logger, normal_path, inp, "ceph", "http://gdc-cephb-objstore.osdc.io/")
         bam_norm = os.path.join(inp, os.path.basename(args.normal))
     else:
-        pipelineUtil.download_from_cleversafe(logger, normal_path, inp, s3cfg_cleversafe)
+        pipelineUtil.download_from_cleversafe(logger, normal_path, inp, "cleversafe", "http://gdc-accessors.osdc.io/")
         bam_norm = os.path.join(inp, os.path.basename(args.normal))
 
     logger.info("getting tumor bam")
     tumor_path = os.path.dirname(args.tumor)+'/'
     if tumor_path.startswith("s3://ceph_"):
-        pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, s3cfg_ceph)
+        pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, "ceph", "http://gdc-cephb-objstore.osdc.io/")
         bam_tumor = os.path.join(inp, os.path.basename(args.tumor))
     else:
-        pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, s3cfg_cleversafe)
+        pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, "cleversafe", "http://gdc-accessors.osdc.io/")
         bam_tumor = os.path.join(inp, os.path.basename(args.tumor))
 
     os.chdir(workdir)
@@ -160,15 +144,15 @@ if __name__ == "__main__":
             "--reference_fasta_path", reference_fasta_path,
             "--reference_fasta_fai", reference_fasta_fai,
             "--reference_fasta_dict", reference_fasta_dict,
-            "--cosmic_path", cosmic_path,
             "--normal_bam_path", bam_norm,
             "--tumor_bam_path", bam_tumor,
             "--normal_id", args.normal_id,
             "--tumor_id", args.tumor_id,
-            "--known_snp_vcf_path", known_snp_vcf_path,
+            "--pon_path", pon_path,
+            "--contEst", str(args.contEst),
             "--Parallel_Block_Size", str(args.block),
             "--thread_count", str(args.thread_count),
-            "--contEst", str(args.contEst),
+            "--java_heap", str(args.java_heap),
             "--case_id", args.case_id,
             "--postgres_config", postgres_config,
             "--output_vcf", vcf_file
@@ -182,7 +166,7 @@ if __name__ == "__main__":
 
     #rename outputs
     orglog2 = os.path.join(workdir, "%s_gatk_mutect2.log" % args.case_id)
-    os.rename(orglog2, os.path.join(workdir, "%s_gatk_mutect2.log" % str(vcf_uuid)))
+    os.rename(orglog2, os.path.join(workdir, "%s_tcga_mutect2_pon.log" % str(vcf_uuid)))
     orglog3 = os.path.join(workdir, "%s_picard_sortvcf.log" % args.case_id)
     os.rename(orglog3, os.path.join(workdir, "%s_picard_sortvcf.log" % str(vcf_uuid)))
 
@@ -192,7 +176,7 @@ if __name__ == "__main__":
 
     vcf_upload_location = os.path.join(mutect_location, vcf_file)
 
-    exit = upload_all_output(workdir, mutect_location, logger, s3cfg_ceph)
+    exit = pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
 
     cwl_end = time.time()
     cwl_elapsed = cwl_end - cwl_start
