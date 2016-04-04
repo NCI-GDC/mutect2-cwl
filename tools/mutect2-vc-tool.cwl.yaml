@@ -127,7 +127,7 @@ outputs:
         engine: node-engine.cwl
         script: |
           {
-          return $job['bam_path'].path.split('/').slice(-1)[0].slice(0,-4)+"_mutect2.vcf";
+          return $job['tumor_bam_path'].path.split('/').slice(-1)[0].slice(0,-4)+"_mutect2.vcf";
           }
 
 
