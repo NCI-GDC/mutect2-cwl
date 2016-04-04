@@ -8,6 +8,9 @@
 refdir="XX_REFDIR_XX"
 block="XX_BLOCKSIZE_XX"
 thread_count="XX_THREAD_COUNT_XX"
+java_heap="XX_JAVAHEAP_XX"
+contEst="XX_CONTEST_XX"
+
 
 normal="XX_NORMAL_XX"
 tumor="XX_TUMOR_XX"
@@ -36,6 +39,8 @@ trap cleanup EXIT
 --refdir $refdir \
 --block $block \
 --thread_count $thread_count \
+--java_heap $java_heap \
+--contEst $contEst \
 --normal $normal \
 --normal_id $normal_id \
 --tumor $tumor \
