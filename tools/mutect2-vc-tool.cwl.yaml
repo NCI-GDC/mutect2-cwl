@@ -20,7 +20,7 @@ requirements:
   - import: node-engine.cwl
   - import: envvar-global.cwl
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/mutect-tool:0.3c
+    dockerPull: quay.io/ncigdc/mutect-tool:0.3d
 
 class: CommandLineTool
 
