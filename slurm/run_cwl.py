@@ -209,7 +209,7 @@ if __name__ == "__main__":
     postgres.create_table(engine, met)
     postgres.add_metrics(engine, met)
 
-    status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.normal_id, args.tumor_id], status, loc)
+    status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.normal_id, args.tumor_id], status, loc, datetime_now, os.path.basename(pon_path))
 
     #remove work and input directories
     pipelineUtil.remove_dir(casedir)
