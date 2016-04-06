@@ -3,7 +3,6 @@
 #SBATCH --cpus-per-task=XX_THREAD_COUNT_XX
 #SBATCH --ntasks=1
 #SBATCH --workdir="/mnt/SCRATCH/"
-#SBATCH --mem=XX_MEM_XX
 
 refdir="XX_REFDIR_XX"
 thread_count="XX_THREAD_COUNT_XX"
