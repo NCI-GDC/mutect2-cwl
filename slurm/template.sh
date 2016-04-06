@@ -3,8 +3,10 @@
 #SBATCH --cpus-per-task=XX_THREAD_COUNT_XX
 #SBATCH --ntasks=1
 #SBATCH --workdir="/mnt/SCRATCH/"
+#SBATCH --mem=XX_MEM_XX
 
 refdir="XX_REFDIR_XX"
+block="XX_BLOCKSIZE_XX"
 thread_count="XX_THREAD_COUNT_XX"
 java_heap="XX_JAVAHEAP_XX"
 contEst="XX_CONTEST_XX"
@@ -35,6 +37,7 @@ trap cleanup EXIT
 
 /home/ubuntu/.virtualenvs/p2/bin/python mutect-cwl/slurm/run_cwl.py \
 --refdir $refdir \
+--block $block \
 --thread_count $thread_count \
 --java_heap $java_heap \
 --contEst $contEst \

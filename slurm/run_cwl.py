@@ -59,6 +59,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run mutect variant calling CWL")
     required = parser.add_argument_group("Required input parameters")
     required.add_argument("--refdir", help="path to reference dir on object store")
+    required.add_argument("--block", type=is_nat, default=50000000, help="parallel block size")
     required.add_argument('--thread_count', type=is_nat, default=8, help='thread count')
     required.add_argument('--java_heap', default=None, help='java heap')
     required.add_argument('--contEst', default=None, help='Contamination Estimation')
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     #download
     logger.info("getting refs")
     reference_fasta_path = os.path.join(index,"GRCh38.d1.vd1.fa")
+    reference_fasta_fai = os.path.join(index,"GRCh38.d1.vd1.fa.fai")
     reference_fasta_dict = os.path.join(index,"GRCh38.d1.vd1.dict")
     pon_path = os.path.join(index, "MuTect2.PON.4982.noformat.vcf.gz")
     postgres_config = os.path.join(index,"postgres_config")
@@ -140,6 +142,7 @@ if __name__ == "__main__":
             "--tmp-outdir-prefix", workdir,
             args.cwl,
             "--reference_fasta_path", reference_fasta_path,
+            "--reference_fasta_fai", reference_fasta_fai,
             "--reference_fasta_dict", reference_fasta_dict,
             "--normal_bam_path", bam_norm,
             "--tumor_bam_path", bam_tumor,
@@ -147,6 +150,7 @@ if __name__ == "__main__":
             "--tumor_id", args.tumor_id,
             "--pon_path", pon_path,
             "--contEst", str(args.contEst),
+            "--Parallel_Block_Size", str(args.block),
             "--thread_count", str(args.thread_count),
             "--java_heap", str(args.java_heap),
             "--case_id", args.case_id,
