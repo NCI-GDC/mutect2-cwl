@@ -6,8 +6,6 @@ description: |
     --normal_bam_path      normal bam path
     --pon_path             panel of normal path
     --reference_fasta_path Homo_sapiens_assembly38.fa
-    --reference_fasta_fai  Homo_sapiens_assembly38.fa.fai (pipeline would take this with Parallel_Block_Size to calculate chunks)
-    --Parallel_Block_Size  number(default = 50000000)
     --contEst              Contamination estimation value
     --thread_count         number(default = 8)
     --java_heap            `-Xmx` for java (eg. 4G)
@@ -20,7 +18,7 @@ requirements:
   - import: node-engine.cwl
   - import: envvar-global.cwl
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/mutect-tool:0.3d
+    dockerPull: quay.io/ncigdc/mutect-tool:0.4a
 
 class: CommandLineTool
 
@@ -66,11 +64,6 @@ inputs:
             return {"path": $job['reference_fasta_path'].path.slice(0,-3)+".dict", "class": "File"};
             }
 
-  - id: "#reference_fasta_fai"
-    type: File
-    inputBinding:
-      prefix: --reference_fasta_fai
-
   - id: "#thread_count"
     type: string
     inputBinding:
@@ -80,11 +73,6 @@ inputs:
     type: string
     inputBinding:
       prefix: --contEst
-
-  - id: "#Parallel_Block_Size"
-    type: string
-    inputBinding:
-      prefix: --Parallel_Block_Size
 
   - id: "#java_heap"
     type: string

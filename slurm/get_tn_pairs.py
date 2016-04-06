@@ -12,7 +12,6 @@ if __name__ == "__main__":
     required.add_argument("--config", default=None, help="path to config file", required=True)
     required.add_argument("--outdir", default="./", help="otuput directory for slurm scripts")
     required.add_argument("--refdir", default=None, help="path to ref dir on object store", required=True)
-    required.add_argument("--block", default=None, help="parallel block size", required=True)
     required.add_argument("--thread_count", default=None, help="thread count", required=True)
     required.add_argument('--java_heap', default=None, help='java heap')
     required.add_argument('--contEst', default=None, help='Contamination Estimation')
@@ -49,9 +48,6 @@ if __name__ == "__main__":
         for line in temp:
             if "XX_REFDIR_XX" in line:
                 line = line.replace("XX_REFDIR_XX", args.refdir)
-
-            if "XX_BLOCKSIZE_XX" in line:
-                line = line.replace("XX_BLOCKSIZE_XX", str(args.block))
 
             if "XX_THREAD_COUNT_XX" in line:
                 line = line.replace("XX_THREAD_COUNT_XX", str(args.thread_count))
