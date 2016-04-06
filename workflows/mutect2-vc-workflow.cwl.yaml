@@ -11,8 +11,12 @@ inputs:
     type: File
   - id: "#reference_fasta_path"
     type: File
+  - id: "#reference_fasta_fai"
+    type: File
   - id: "#reference_fasta_dict"
     type: File
+  - id: "#Parallel_Block_Size"
+    type: string
   - id: "#contEst"
     type: string
   - id: "#thread_count"
@@ -56,8 +60,12 @@ steps:
         source: "#pon_path"
       - id: "#mutect2-vc-tool.reference_fasta_path"
         source: "#reference_fasta_path"
+      - id: "#mutect2-vc-tool.reference_fasta_fai"
+        source: "#reference_fasta_fai"
       - id: "#mutect2-vc-tool.contEst"
         source: "#contEst"
+      - id: "#mutect2-vc-tool.Parallel_Block_Size"
+        source: "#Parallel_Block_Size"
       - id: "#mutect2-vc-tool.thread_count"
         source: "#thread_count"
       - id: "#mutect2-vc-tool.java_heap"

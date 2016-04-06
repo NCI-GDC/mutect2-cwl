@@ -1,11 +1,13 @@
 #!/usr/bin/env cwl-runner
 
 description: |
-  Usage:  cwl-runner /path/to/mutect2-vc-tool.cwl.yaml --tumor_bam_path /path/to/tumor.bam --normal_bam_path /path/to/bam_file --known_snp_vcf_path /path/to/dbsnp_144.grch38.vcf --reference_fasta_path /path/to/ref.fa --cosmic_path /path/to/CosmicCombined.srt.vcf --contEst Contamination estimation value --thread_count number(default = 8) --case_id case_id --normal_id gdc_normal_id --tumor_id gdc_tumor_id --postgres_config postgres_config
+  Usage:  cwl-runner /path/to/mutect2-vc-tool.cwl.yaml --tumor_bam_path /path/to/tumor.bam --normal_bam_path /path/to/bam_file --known_snp_vcf_path /path/to/dbsnp_144.grch38.vcf --reference_fasta_path /path/to/ref.fa --reference_fasta_fai /path/to/ref.fa.fai --cosmic_path /path/to/CosmicCombined.srt.vcf --Parallel_Block_Size number(default = 50000000) --contEst Contamination estimation value --thread_count number(default = 8) --case_id case_id --normal_id gdc_normal_id --tumor_id gdc_tumor_id --postgres_config postgres_config
     --tumor_bam_path       tumor bam path
     --normal_bam_path      normal bam path
     --pon_path             panel of normal path
     --reference_fasta_path Homo_sapiens_assembly38.fa
+    --reference_fasta_fai  Homo_sapiens_assembly38.fa.fai (pipeline would take this with Parallel_Block_Size to calculate chunks)
+    --Parallel_Block_Size  number(default = 50000000)
     --contEst              Contamination estimation value
     --thread_count         number(default = 8)
     --java_heap            `-Xmx` for java (eg. 4G)
@@ -64,6 +66,11 @@ inputs:
             return {"path": $job['reference_fasta_path'].path.slice(0,-3)+".dict", "class": "File"};
             }
 
+  - id: "#reference_fasta_fai"
+    type: File
+    inputBinding:
+      prefix: --reference_fasta_fai
+
   - id: "#thread_count"
     type: string
     inputBinding:
@@ -73,6 +80,11 @@ inputs:
     type: string
     inputBinding:
       prefix: --contEst
+
+  - id: "#Parallel_Block_Size"
+    type: string
+    inputBinding:
+      prefix: --Parallel_Block_Size
 
   - id: "#java_heap"
     type: string
