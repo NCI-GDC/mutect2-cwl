@@ -44,7 +44,7 @@ if __name__ == "__main__":
     cases = status_postgres.get_case(engine, 'mutect2_status')
 
     for case in cases:
-        slurm = open(os.path.join(args.outdir, "mutect2.%s.%s.sh" %(cases[case][1], cases[case][3])), "w")
+        slurm = open(os.path.join(args.outdir, "m2.%s.%s.sh" %(cases[case][1], cases[case][3])), "w")
         temp = open("template.sh", "r")
         for line in temp:
             if "XX_REFDIR_XX" in line:
