@@ -113,7 +113,7 @@ if __name__ == "__main__":
     reference_fasta_path = os.path.join(index,"GRCh38.d1.vd1.fa")
     reference_fasta_fai = os.path.join(index,"GRCh38.d1.vd1.fa.fai")
     reference_fasta_dict = os.path.join(index,"GRCh38.d1.vd1.dict")
-    pon_path = os.path.join(index, "MuTect2.PON.4982.noformat.vcf.gz")
+    pon_path = os.path.join(index, "MuTect2.PON.5210.vcf.gz")
     postgres_config = os.path.join(index,"postgres_config")
 
     logger.info("getting normal bam")
