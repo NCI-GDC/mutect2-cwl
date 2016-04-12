@@ -54,6 +54,20 @@ inputs:
       secondaryFiles:
         - ".tbi"
 
+  - id: "#known_snp_vcf_path"
+    type: File
+    inputBinding:
+      prefix: --known_snp_vcf_path
+      secondaryFiles:
+        - ".idx"
+
+  - id: "#cosmic_path"
+    type: File
+    inputBinding:
+      prefix: --cosmic_path
+      secondaryFiles:
+        - ".idx"        
+
   - id: "#reference_fasta_path"
     type: File
     inputBinding:

@@ -9,6 +9,10 @@ inputs:
     type: File
   - id: "#pon_path"
     type: File
+  - id: "#known_snp_vcf_path"
+    type: File
+  - id: "#cosmic_path"
+    type: File
   - id: "#reference_fasta_path"
     type: File
   - id: "#reference_fasta_fai"
@@ -58,6 +62,10 @@ steps:
         source: "#tumor_bam_path"
       - id: "#mutect2-vc-tool.pon_path"
         source: "#pon_path"
+      - id: "#mutect2-vc-tool.known_snp_vcf_path"
+        source: "#known_snp_vcf_path"
+      - id: "#mutect2-vc-tool.cosmic_path"
+        source: "#cosmic_path"
       - id: "#mutect2-vc-tool.reference_fasta_path"
         source: "#reference_fasta_path"
       - id: "#mutect2-vc-tool.reference_fasta_fai"

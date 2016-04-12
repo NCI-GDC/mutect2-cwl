@@ -114,6 +114,8 @@ if __name__ == "__main__":
     reference_fasta_fai = os.path.join(index,"GRCh38.d1.vd1.fa.fai")
     reference_fasta_dict = os.path.join(index,"GRCh38.d1.vd1.dict")
     pon_path = os.path.join(index, "MuTect2.PON.5210.vcf.gz")
+    known_snp_vcf_path = os.path.join(index,"dbsnp_144.grch38.vcf")
+    cosmic_path = os.path.join(index,"CosmicCombined.srt.vcf")
     postgres_config = os.path.join(index,"postgres_config")
 
     logger.info("getting normal bam")
@@ -149,6 +151,8 @@ if __name__ == "__main__":
             "--normal_id", args.normal_id,
             "--tumor_id", args.tumor_id,
             "--pon_path", pon_path,
+            "--known_snp_vcf_path", known_snp_vcf_path,
+            "--cosmic_path", cosmic_path,            
             "--contEst", str(args.contEst),
             "--Parallel_Block_Size", str(args.block),
             "--thread_count", str(args.thread_count),
