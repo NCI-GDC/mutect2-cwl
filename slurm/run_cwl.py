@@ -170,9 +170,11 @@ if __name__ == "__main__":
 
     #rename outputs
     orglog2 = os.path.join(workdir, "%s_gatk_mutect2.log" % args.case_id)
-    os.rename(orglog2, os.path.join(workdir, "%s_tcga_mutect2_pon.log" % str(vcf_uuid)))
+    if os.path.isfile(orglog2):
+        os.rename(orglog2, os.path.join(workdir, "%s_tcga_mutect2_pon.log" % str(vcf_uuid)))
     orglog3 = os.path.join(workdir, "%s_picard_sortvcf.log" % args.case_id)
-    os.rename(orglog3, os.path.join(workdir, "%s_picard_sortvcf.log" % str(vcf_uuid)))
+    if os.path.isfile(orglog3):
+        os.rename(orglog3, os.path.join(workdir, "%s_picard_sortvcf.log" % str(vcf_uuid)))
 
     #upload results to s3
 
