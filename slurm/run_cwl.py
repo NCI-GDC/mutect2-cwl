@@ -166,7 +166,7 @@ if __name__ == "__main__":
                 args.index,
                 '--bam_path', bam_tumor,
                 '--uuid', str(args.case_id)]
-                index_exit = pipelineUtil.run_command(index, logger)
+        index_exit = pipelineUtil.run_command(index, logger)
         if index_exit == 0:
             logger.info("Build %s index successfully" % bam_tumor)
         else:
