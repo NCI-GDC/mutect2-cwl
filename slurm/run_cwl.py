@@ -2,6 +2,7 @@ import argparse
 import pipelineUtil
 import uuid
 import os
+import sys
 import postgres
 import status_postgres
 import setupLog
