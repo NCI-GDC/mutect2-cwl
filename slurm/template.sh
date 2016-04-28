@@ -48,4 +48,5 @@ trap cleanup EXIT
 --case_id $case_id \
 --basedir $wkdir \
 --s3dir $s3dir \
+--index $wkdir/mutect-cwl/tools/picard_buildbamindex.cwl.yaml \
 --cwl $wkdir/mutect-cwl/workflows/mutect2-vc-workflow.cwl.yaml
