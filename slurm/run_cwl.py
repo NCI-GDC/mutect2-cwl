@@ -90,6 +90,7 @@ if __name__ == "__main__":
     #generate a random uuid
     vcf_uuid = uuid.uuid4()
     vcf_file = "%s.vcf" %(str(vcf_uuid))
+    mutect_location = os.path.join(args.s3dir, str(vcf_uuid))
 
     #setup logger
     log_file = os.path.join(workdir, "%s.mutect.cwl.log" %str(vcf_uuid))
@@ -136,6 +137,43 @@ if __name__ == "__main__":
         pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, "cleversafe", "http://gdc-accessors.osdc.io/")
         bam_tumor = os.path.join(inp, os.path.basename(args.tumor))
 
+    norm_base, norm_ext = os.path.splitext(os.path.basename(bam_norm))
+    bai_norm = os.path.join(inp, norm_base) + '.bai'
+    if os.path.isfile(bai_norm):
+        logger.info("norm .bai file exists %s" % bai_norm)
+    else:
+        index = ['/home/ubuntu/.virtualenvs/p2/bin/cwl-runner',
+                 '--debug',
+                 args.index,
+                 '--bam_path', bam_norm,
+                 '--uuid', str(args.case_id)]
+        index_exit = pipelineUtil.run_command(index, logger)
+        if index_exit == 0:
+            logger.info("Build %s index successfully" % bam_norm)
+        else:
+            logger.info("Failed to build %s index" % bam_norm)
+            status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.normal_id, args.tumor_id], "Download_Failure", "NULL", datetime_now, os.path.basename(pon_path))
+            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+            sys.exit("Failed to build %s index" % bam_norm)
+    tumor_base, tumor_ext = os.path.splitext(os.path.basename(bam_tumor))
+    bai_tumor = os.path.join(inp, tumor_base) + '.bai'
+    if os.path.isfile(bai_tumor):
+        logger.info("tumor .bai file exists %s" % bai_tumor)
+    else:
+        index = ['/home/ubuntu/.virtualenvs/p2/bin/cwl-runner',
+                '--debug',
+                args.index,
+                '--bam_path', bam_tumor,
+                '--uuid', str(args.case_id)]
+                index_exit = pipelineUtil.run_command(index, logger)
+        if index_exit == 0:
+            logger.info("Build %s index successfully" % bam_tumor)
+        else:
+            logger.info("Failed to build %s index" % bam_tumor)
+            status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.tumoral_id, args.tumor_id], "Download_Failure", "NULL", datetime_now, os.path.basename(pon_path))
+            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+            sys.exit("Failed to build %s index" % bam_tumor)
+
     os.chdir(workdir)
     #run cwl command
     cmd = ['/home/ubuntu/.virtualenvs/p2/bin/cwl-runner',
@@ -152,7 +190,7 @@ if __name__ == "__main__":
             "--tumor_id", args.tumor_id,
             "--pon_path", pon_path,
             "--known_snp_vcf_path", known_snp_vcf_path,
-            "--cosmic_path", cosmic_path,            
+            "--cosmic_path", cosmic_path,
             "--contEst", str(args.contEst),
             "--Parallel_Block_Size", str(args.block),
             "--thread_count", str(args.thread_count),
@@ -177,8 +215,6 @@ if __name__ == "__main__":
         os.rename(orglog3, os.path.join(workdir, "%s_picard_sortvcf.log" % str(vcf_uuid)))
 
     #upload results to s3
-
-    mutect_location = os.path.join(args.s3dir, str(vcf_uuid))
 
     vcf_upload_location = os.path.join(mutect_location, vcf_file)
 
