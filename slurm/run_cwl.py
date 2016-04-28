@@ -69,7 +69,7 @@ if __name__ == "__main__":
     required.add_argument("--normal_id", default=None, help="UUID for normal BAM")
     required.add_argument("--tumor_id", default=None, help="UUID for tumor BAM")
     required.add_argument("--case_id", default=None, help="UUID for case")
-
+    required.add_argument("--index", default=None, help="Path to CWL BuildBamIndex tool code")
     required.add_argument("--cwl", default=None, help="Path to CWL code")
 
     optional = parser.add_argument_group("Optional input parameters")
