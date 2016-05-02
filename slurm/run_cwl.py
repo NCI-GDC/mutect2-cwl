@@ -137,7 +137,8 @@ if __name__ == "__main__":
     else:
         pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, "cleversafe", "http://gdc-accessors.osdc.io/")
         bam_tumor = os.path.join(inp, os.path.basename(args.tumor))
-
+    
+    os.chdir(inp)
     norm_base, norm_ext = os.path.splitext(os.path.basename(bam_norm))
     bai_norm = os.path.join(inp, norm_base) + '.bai'
     if os.path.isfile(bai_norm):
