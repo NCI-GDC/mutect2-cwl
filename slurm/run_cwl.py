@@ -120,6 +120,21 @@ if __name__ == "__main__":
     cosmic_path = os.path.join(index,"CosmicCombined.srt.vcf")
     postgres_config = os.path.join(index,"postgres_config")
 
+    #establish connection with database
+    s = open(postgres_config, 'r').read()
+    postgres_creds = eval(s)
+
+    DATABASE = {
+        'drivername': 'postgres',
+        'host' : 'pgreadwrite.osdc.io',
+        'port' : '5432',
+        'username': postgres_creds['username'],
+        'password' : postgres_creds['password'],
+        'database' : 'prod_bioinfo'
+    }
+
+    engine = postgres.db_connect(DATABASE)
+
     logger.info("getting normal bam")
     normal_path = os.path.dirname(args.normal)+'/'
     if normal_path.startswith("s3://ceph_"):
@@ -224,21 +239,6 @@ if __name__ == "__main__":
 
     cwl_end = time.time()
     cwl_elapsed = cwl_end - cwl_start
-
-    #establish connection with database
-    s = open(postgres_config, 'r').read()
-    postgres_config = eval(s)
-
-    DATABASE = {
-        'drivername': 'postgres',
-        'host' : 'pgreadwrite.osdc.io',
-        'port' : '5432',
-        'username': postgres_config['username'],
-        'password' : postgres_config['password'],
-        'database' : 'prod_bioinfo'
-    }
-
-    engine = postgres.db_connect(DATABASE)
 
     status, loc = update_postgres(exit, cwl_failure, vcf_upload_location, mutect_location, logger)
 
