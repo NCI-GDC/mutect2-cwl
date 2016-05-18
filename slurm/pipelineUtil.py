@@ -29,7 +29,7 @@ def download_from_cleversafe(logger, remote_input, local_output, profile, endpoi
 
     if (remote_input != ""):
         #cmd = ['s3cmd', '-c', config, 'sync', remote_input, local_output]
-        cmd = ['/home/ubuntu/.virtualenvs/p2/bin/aws', '--profile', profile, '--endpoint-url', endpoint_url, 's3', 'cp', remote_input, local_output, '--recursive']
+        cmd = ['/home/ubuntu/.virtualenvs/p2/bin/aws', '--profile', profile, '--endpoint-url', endpoint_url, '--no-verify-ssl', 's3', 'cp', remote_input, local_output]
         print cmd
         exit_code = run_command(cmd, logger)
     else:
@@ -41,7 +41,7 @@ def upload_to_cleversafe(logger, remote_output, local_input, profile, endpoint_u
 
     if (remote_output != "" and (os.path.isfile(local_input) or os.path.isdir(local_input))):
         #cmd = ['s3cmd', '-c', config, 'sync', local_input, remote_output]
-        cmd = ['/home/ubuntu/.virtualenvs/p2/bin/aws', '--profile', profile, '--endpoint-url', endpoint_url, 's3', 'cp', local_input, remote_output, '--recursive']
+        cmd = ['/home/ubuntu/.virtualenvs/p2/bin/aws', '--profile', profile, '--endpoint-url', endpoint_url, '--no-verify-ssl', 's3', 'cp', local_input, remote_output, '--recursive']
         exit_code = run_command(cmd, logger)
     else:
         raise Exception("invalid input %s or output %s" %(local_input, remote_output))
