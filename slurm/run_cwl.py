@@ -136,23 +136,29 @@ if __name__ == "__main__":
     engine = postgres.db_connect(DATABASE)
 
     logger.info("getting normal bam")
-    normal_path = os.path.dirname(args.normal)+'/'
-    if normal_path.startswith("s3://ceph_"):
-        pipelineUtil.download_from_cleversafe(logger, normal_path, inp, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+    normal_bam_input_url = str(args.normal)
+    normal_bai_input_url = bam_input_url[:-1]+'i'
+    tumor_bam_input_url = str(args.normal)
+    tumor_bai_input_url = bam_input_url[:-1]+'i'
+    if args.normal.startswith("s3://ceph_"):
+        pipelineUtil.download_from_cleversafe(logger, normal_bam_input_url, str(inp), "ceph", "https://gdc-cephb-objstore.osdc.io/")
+        pipelineUtil.download_from_cleversafe(logger, normal_bai_input_url, str(inp), "ceph", "https://gdc-cephb-objstore.osdc.io/")
         bam_norm = os.path.join(inp, os.path.basename(args.normal))
     else:
-        pipelineUtil.download_from_cleversafe(logger, normal_path, inp, "cleversafe", "http://gdc-accessors.osdc.io/")
+        pipelineUtil.download_from_cleversafe(logger, normal_bam_input_url, str(inp), "cleversafe", "https://gdc-accessors.osdc.io/")
+        pipelineUtil.download_from_cleversafe(logger, normal_bai_input_url, str(inp), "cleversafe", "https://gdc-accessors.osdc.io/")
         bam_norm = os.path.join(inp, os.path.basename(args.normal))
 
     logger.info("getting tumor bam")
-    tumor_path = os.path.dirname(args.tumor)+'/'
-    if tumor_path.startswith("s3://ceph_"):
-        pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+    if args.tumor.startswith("s3://ceph_"):
+        pipelineUtil.download_from_cleversafe(logger, tumor_bam_input_url, str(inp), "ceph", "https://gdc-cephb-objstore.osdc.io/")
+        pipelineUtil.download_from_cleversafe(logger, tumor_bai_input_url, str(inp), "ceph", "https://gdc-cephb-objstore.osdc.io/")
         bam_tumor = os.path.join(inp, os.path.basename(args.tumor))
     else:
-        pipelineUtil.download_from_cleversafe(logger, tumor_path, inp, "cleversafe", "http://gdc-accessors.osdc.io/")
+        pipelineUtil.download_from_cleversafe(logger, tumor_bam_input_url, str(inp), "cleversafe", "https://gdc-accessors.osdc.io/")
+        pipelineUtil.download_from_cleversafe(logger, tumor_bai_input_url, str(inp), "cleversafe", "https://gdc-accessors.osdc.io/")
         bam_tumor = os.path.join(inp, os.path.basename(args.tumor))
-    
+
     os.chdir(inp)
     norm_base, norm_ext = os.path.splitext(os.path.basename(bam_norm))
     bai_norm = os.path.join(inp, norm_base) + '.bai'
@@ -170,7 +176,7 @@ if __name__ == "__main__":
         else:
             logger.info("Failed to build %s index" % bam_norm)
             status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.normal_id, args.tumor_id], "Download_Failure", "NULL", datetime_now, os.path.basename(pon_path))
-            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "https://gdc-cephb-objstore.osdc.io/")
             sys.exit("Failed to build %s index" % bam_norm)
     tumor_base, tumor_ext = os.path.splitext(os.path.basename(bam_tumor))
     bai_tumor = os.path.join(inp, tumor_base) + '.bai'
@@ -188,7 +194,7 @@ if __name__ == "__main__":
         else:
             logger.info("Failed to build %s index" % bam_tumor)
             status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.tumoral_id, args.tumor_id], "Download_Failure", "NULL", datetime_now, os.path.basename(pon_path))
-            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "https://gdc-cephb-objstore.osdc.io/")
             sys.exit("Failed to build %s index" % bam_tumor)
 
     os.chdir(workdir)
@@ -235,7 +241,7 @@ if __name__ == "__main__":
 
     vcf_upload_location = os.path.join(mutect_location, vcf_file)
 
-    exit = pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+    exit = pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "https://gdc-cephb-objstore.osdc.io/")
 
     cwl_end = time.time()
     cwl_elapsed = cwl_end - cwl_start
