@@ -137,9 +137,9 @@ if __name__ == "__main__":
 
     logger.info("getting normal bam")
     normal_bam_input_url = str(args.normal)
-    normal_bai_input_url = bam_input_url[:-1]+'i'
+    normal_bai_input_url = normal_bam_input_url[:-1]+'i'
     tumor_bam_input_url = str(args.normal)
-    tumor_bai_input_url = bam_input_url[:-1]+'i'
+    tumor_bai_input_url = tumor_bam_input_url[:-1]+'i'
     if args.normal.startswith("s3://ceph_"):
         pipelineUtil.download_from_cleversafe(logger, normal_bam_input_url, str(inp), "ceph", "https://gdc-cephb-objstore.osdc.io/")
         pipelineUtil.download_from_cleversafe(logger, normal_bai_input_url, str(inp), "ceph", "https://gdc-cephb-objstore.osdc.io/")
