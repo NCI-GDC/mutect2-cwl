@@ -43,6 +43,11 @@ inputs:
     inputBinding:
       prefix: --postgres_config
 
+  - id: "#host"
+    type: string
+    inputBinding:
+      prefix: --host
+      
 outputs:
   - id: "#srt_vcf"
     type: File

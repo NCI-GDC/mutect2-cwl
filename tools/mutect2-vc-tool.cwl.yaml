@@ -66,7 +66,7 @@ inputs:
     inputBinding:
       prefix: --cosmic_path
       secondaryFiles:
-        - ".idx"        
+        - ".idx"
 
   - id: "#reference_fasta_path"
     type: File
@@ -125,6 +125,11 @@ inputs:
     inputBinding:
       prefix: --postgres_config
 
+  - id: "#host"
+    type: string
+    inputBinding:
+      prefix: --host
+      
 outputs:
   - id: "#output_list"
     type:
