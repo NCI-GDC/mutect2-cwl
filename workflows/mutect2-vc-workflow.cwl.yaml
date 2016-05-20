@@ -37,6 +37,8 @@ inputs:
     type: string
   - id: "#postgres_config"
     type: File
+  - id: "#host"
+    type: string
 
 outputs:
 
@@ -86,6 +88,8 @@ steps:
         source: "#tumor_id"
       - id: "#mutect2-vc-tool.postgres_config"
         source: "#postgres_config"
+      - id: "#mutect2-vc-tool.host"
+        source: "#host"
 
     outputs:
       - id: "#mutect2-vc-tool.out_vc_vcf"
@@ -105,6 +109,8 @@ steps:
         source: "#postgres_config"
       - id: "#picard-sortvcf.output_vcf"
         source: "#output_vcf"
+      - id: "#picard-sortvcf.host"
+        source: "#host"
 
     outputs:
       - id: "#picard-sortvcf.srt_vcf"
