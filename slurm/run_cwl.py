@@ -62,6 +62,8 @@ if __name__ == "__main__":
     required.add_argument("--refdir", help="path to reference dir on object store")
     required.add_argument("--block", type=is_nat, default=50000000, help="parallel block size")
     required.add_argument('--thread_count', type=is_nat, default=8, help='thread count')
+    required.add_argument('--host', default=None, help="hostname for db")
+
     required.add_argument('--java_heap', default=None, help='java heap')
     required.add_argument('--contEst', default=None, help='Contamination Estimation')
 
@@ -220,8 +222,8 @@ if __name__ == "__main__":
             "--java_heap", str(args.java_heap),
             "--case_id", args.case_id,
             "--postgres_config", postgres_config,
-            "--output_vcf", vcf_file
-            ]
+            "--output_vcf", vcf_file,
+            "--host", str(args.host)]
 
     cwl_exit = pipelineUtil.run_command(cmd, logger)
 
