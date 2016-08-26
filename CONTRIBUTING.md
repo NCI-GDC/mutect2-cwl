@@ -18,7 +18,7 @@ Feature pattern can simplify development
 - https://medium.com/opinionated-angularjs/scalable-code-organization-in-angularjs-9f01b594bf06
 - https://github.com/mgechev/angularjs-in-patterns
 - http://blog.mgechev.com/2014/05/08/angularjs-in-patterns-part-1-overview-of-angularjs/
- 
+
 ## Page Object Pattern
 
 Page Object pattern can simplify testing
@@ -61,7 +61,7 @@ This branch structure is similar to git flow but customized for our use cases. A
 Commit messages follow a combination of guidelines set by Angular and Tim Pope.
 
 Examples of valid commits:
- 
+
 ```
 type(scope): one line description (50 char or less)
 ```
@@ -95,7 +95,7 @@ This format is automatically checked by a pre commit git hook.
 
 ## Code Review
 
-All branches should be pushed to [Github](https://github.com/NCI-GDC/portal-ui) for code review. 
+All branches should be pushed to [Github](https://github.com/NCI-GDC/portal-ui) for code review.
 
 Any branches containing significant work need to be reviewed and signed-off before they can be considered complete.
 
@@ -132,7 +132,7 @@ Tags should be signed.
 
 ### Generating a PGP Key
 ```
-❯ brew install gpg 
+❯ brew install gpg
 ❯ gpg --gen-key
 ❯ gpg --list-secret-keys | grep "^sec"
 [gpg-key-id]
