@@ -39,6 +39,9 @@ inputs:
     type: File
   - id: "#host"
     type: string
+  - id: "#dontUseSoftClippedBases"
+    type: boolean
+    default: False
 
 outputs:
 
@@ -90,7 +93,8 @@ steps:
         source: "#postgres_config"
       - id: "#mutect2-vc-tool.host"
         source: "#host"
-
+      - id: "#mutect2-vc-tool.dontUseSoftClippedBases"
+        source: "#dontUseSoftClippedBases"
     outputs:
       - id: "#mutect2-vc-tool.out_vc_vcf"
       - id: "#mutect2-vc-tool.output_list"
