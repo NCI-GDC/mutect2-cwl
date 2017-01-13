@@ -20,7 +20,7 @@ requirements:
   - import: node-engine.cwl
   - import: envvar-global.cwl
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/mutect-tool:0.5d
+    dockerPull: quay.io/ncigdc/mutect-tool:0.8e
 
 class: CommandLineTool
 
@@ -129,7 +129,13 @@ inputs:
     type: string
     inputBinding:
       prefix: --host
-      
+
+  - id: "#dontUseSoftClippedBases"
+    type: boolean
+    default: False
+    inputBinding:
+      prefix: --dontUseSoftClippedBases
+
 outputs:
   - id: "#output_list"
     type:
