@@ -13,7 +13,7 @@ requirements:
   - import: node-engine.cwl
   - import: envvar-global.cwl
   - class: DockerRequirement
-    dockerPull: quay.io/shenglai/picard-sortvcf-tool:0.16c
+    dockerPull: quay.io/shenglai/picard-sortvcf-tool:0.18c
 
 class: CommandLineTool
 
@@ -47,7 +47,7 @@ inputs:
     type: string
     inputBinding:
       prefix: --host
-      
+
 outputs:
   - id: "#srt_vcf"
     type: File
