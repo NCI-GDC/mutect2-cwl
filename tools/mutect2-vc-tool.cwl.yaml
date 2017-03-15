@@ -20,7 +20,7 @@ requirements:
   - import: node-engine.cwl
   - import: envvar-global.cwl
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/mutect-tool:0.8e
+    dockerPull: quay.io/ncigdc/mutect2-tool:1.0a
 
 class: CommandLineTool
 
@@ -167,4 +167,4 @@ outputs:
           return $job['case_id']+"_gatk_mutect2.log"
           }
 
-baseCommand: ["/home/ubuntu/.virtualenvs/p3/bin/python","/home/ubuntu/tools/mutect-tool/main.py"]
+baseCommand: ["/home/ubuntu/.virtualenvs/p3/bin/python","/home/ubuntu/tools/mutect2-tool/main.py"]

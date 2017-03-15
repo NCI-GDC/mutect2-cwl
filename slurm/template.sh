@@ -21,8 +21,8 @@ tumor_id="XX_TUMOR_ID_XX"
 case_id="XX_CASE_ID_XX"
 
 s3dir="XX_S3DIR_XX"
-repository="git@github.com:NCI-GDC/mutect-cwl.git"
-wkdir=`sudo mktemp -d mutect.XXXXXXXXXX -p /mnt/SCRATCH/`
+repository="git@github.com:NCI-GDC/mutect2-cwl.git"
+wkdir=`sudo mktemp -d mutect2.XXXXXXXXXX -p /mnt/SCRATCH/`
 sudo chown ubuntu:ubuntu $wkdir
 
 cd $wkdir
@@ -32,12 +32,12 @@ function cleanup (){
     sudo rm -rf $wkdir;
 }
 
-sudo git clone -b feat/slurm $repository
-sudo chown ubuntu:ubuntu -R mutect-cwl
+sudo git clone $repository
+sudo chown ubuntu:ubuntu -R mutect2-cwl
 
 trap cleanup EXIT
 
-/home/ubuntu/.virtualenvs/p2/bin/python mutect-cwl/slurm/run_cwl.py \
+/home/ubuntu/.virtualenvs/p2/bin/python mutect2-cwl/slurm/run_cwl.py \
 --refdir $refdir \
 --block $block \
 --thread_count $thread_count \
@@ -51,5 +51,5 @@ trap cleanup EXIT
 --case_id $case_id \
 --basedir $wkdir \
 --s3dir $s3dir \
---index $wkdir/mutect-cwl/tools/picard_buildbamindex.cwl.yaml \
---cwl $wkdir/mutect-cwl/workflows/mutect2-vc-workflow.cwl.yaml
+--index $wkdir/mutect2-cwl/tools/picard_buildbamindex.cwl.yaml \
+--cwl $wkdir/mutect2-cwl/workflows/mutect2-vc-workflow.cwl.yaml

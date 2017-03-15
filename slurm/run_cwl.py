@@ -12,7 +12,7 @@ import time
 import datetime
 from elapsed_time import Time as Time
 
-def update_postgres(exit, cwl_failure, vcf_upload_location, mutect_location, logger):
+def update_postgres(exit, cwl_failure, vcf_upload_location, mutect2_location, logger):
     """ update the status of job on postgres """
 
     loc = 'UNKNOWN'
@@ -25,12 +25,12 @@ def update_postgres(exit, cwl_failure, vcf_upload_location, mutect_location, log
         if not(cwl_failure):
 
             status = 'COMPLETED'
-            logger.info("uploaded all files to object store. The path is: %s" %mutect_location)
+            logger.info("uploaded all files to object store. The path is: %s" %mutect2_location)
 
         else:
 
             status = 'CWL_FAILED'
-            logger.info("CWL failed but outputs were generated. The path is: %s" %mutect_location)
+            logger.info("CWL failed but outputs were generated. The path is: %s" %mutect2_location)
 
     else:
 
@@ -57,7 +57,7 @@ def is_nat(x):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Run mutect variant calling CWL")
+    parser = argparse.ArgumentParser(description="Run mutect2 variant calling CWL")
     required = parser.add_argument_group("Required input parameters")
     required.add_argument("--refdir", help="path to reference dir on object store")
     required.add_argument("--block", type=is_nat, default=50000000, help="parallel block size")
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         raise Exception("Could not find path to base directory: %s" %args.basedir)
 
     #create directory structure
-    casedir = tempfile.mkdtemp(prefix="mutect_%s_" %args.case_id, dir=args.basedir)
+    casedir = tempfile.mkdtemp(prefix="mutect2_%s_" %args.case_id, dir=args.basedir)
     workdir = tempfile.mkdtemp(prefix="workdir_", dir=casedir)
     inp = tempfile.mkdtemp(prefix="input_", dir=casedir)
     index = args.refdir
@@ -93,10 +93,10 @@ if __name__ == "__main__":
     #generate a random uuid
     vcf_uuid = uuid.uuid4()
     vcf_file = "%s.vcf" %(str(vcf_uuid))
-    mutect_location = os.path.join(args.s3dir, str(vcf_uuid))
+    mutect2_location = os.path.join(args.s3dir, str(vcf_uuid))
 
     #setup logger
-    log_file = os.path.join(workdir, "%s.mutect.cwl.log" %str(vcf_uuid))
+    log_file = os.path.join(workdir, "%s.mutect2.cwl.log" %str(vcf_uuid))
     logger = setupLog.setup_logging(logging.INFO, str(vcf_uuid), log_file)
 
     #logging inputs
@@ -178,7 +178,7 @@ if __name__ == "__main__":
         else:
             logger.info("Failed to build %s index" % bam_norm)
             status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.normal_id, args.tumor_id], "Download_Failure", "NULL", datetime_now, os.path.basename(pon_path))
-            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+            pipelineUtil.upload_to_cleversafe(logger, mutect2_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
             sys.exit("Failed to build %s index" % bam_norm)
     tumor_base, tumor_ext = os.path.splitext(os.path.basename(bam_tumor))
     bai_tumor = os.path.join(inp, tumor_base) + '.bai'
@@ -196,7 +196,7 @@ if __name__ == "__main__":
         else:
             logger.info("Failed to build %s index" % bam_tumor)
             status_postgres.add_status(engine, args.case_id, str(vcf_uuid), [args.tumoral_id, args.tumor_id], "Download_Failure", "NULL", datetime_now, os.path.basename(pon_path))
-            pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+            pipelineUtil.upload_to_cleversafe(logger, mutect2_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
             sys.exit("Failed to build %s index" % bam_tumor)
 
     os.chdir(workdir)
@@ -245,14 +245,14 @@ if __name__ == "__main__":
 
     #upload results to s3
 
-    vcf_upload_location = os.path.join(mutect_location, vcf_file)
+    vcf_upload_location = os.path.join(mutect2_location, vcf_file)
 
-    exit = pipelineUtil.upload_to_cleversafe(logger, mutect_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
+    exit = pipelineUtil.upload_to_cleversafe(logger, mutect2_location, workdir, "ceph", "http://gdc-cephb-objstore.osdc.io/")
 
     cwl_end = time.time()
     cwl_elapsed = cwl_end - cwl_start
 
-    status, loc = update_postgres(exit, cwl_failure, vcf_upload_location, mutect_location, logger)
+    status, loc = update_postgres(exit, cwl_failure, vcf_upload_location, mutect2_location, logger)
 
     met = Time(case_id = args.case_id,
                datetime_now = datetime_now,
