@@ -14,6 +14,7 @@ inputs:
 
   - id: java_heap
     type: string
+    doc: Java heap memory.
     inputBinding:
       position: 2
       prefix: '-Xmx'
@@ -21,6 +22,7 @@ inputs:
 
   - id: ref
     type: File
+    doc: Reference fasta file.
     inputBinding:
       position: 8
       prefix: -R
@@ -30,12 +32,14 @@ inputs:
 
   - id: region
     type: string
+    doc: Region used for scattering.
     inputBinding:
       position: 9
       prefix: '-L'
 
   - id: normal_bam
     type: File
+    doc: Normal bam file.
     inputBinding:
       position: 10
       prefix: '-I:tumor'
@@ -44,6 +48,7 @@ inputs:
 
   - id: cosmic
     type: File
+    doc: Cosmic reference file path.
     inputBinding:
       position: 11
       prefix: '--cosmic'
@@ -52,6 +57,7 @@ inputs:
 
   - id: dbsnp
     type: File
+    doc: dbSNP reference file path.
     inputBinding:
       position: 12
       prefix: '--dbsnp'
@@ -60,18 +66,21 @@ inputs:
 
   - id: cont
     type: string
+    doc: Contamination estimation score.
     inputBinding:
       position: 13
       prefix: '--contamination_fraction_to_filter'
 
   - id: output_name
     type: string
+    doc: Output file name.
     inputBinding:
       position: 14
       prefix: '-o'
 
   - id: duscb
     type: boolean
+    doc: Whether to use soft clipped bases, default is False.
     default: false
     inputBinding:
       position: 18
