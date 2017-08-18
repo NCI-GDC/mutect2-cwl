@@ -66,7 +66,7 @@ def get_pon_case(engine, input_table, status_table, input_primary_column="id"):
                         rexecute = False
             if rexecute:
                 s[count] = [row.case_id,
-                            row.gdc_id,
+                            row.normal_gdc_id,
                             row.filesize,
                             row.s3_url]
                 count += 1
