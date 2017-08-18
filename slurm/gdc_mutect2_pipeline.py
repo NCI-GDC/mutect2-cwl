@@ -105,7 +105,7 @@ def run_pipeline(args, statusclass, metricsclass):
     known_snp_vcf_path    = os.path.join(refdir, reference_data["known_snp_vcf"])
     cosmic_path           = os.path.join(refdir, reference_data["cosmic_path"])
     pon_path              = os.path.join(refdir, reference_data["pon_path"])
-    duscb                 = os.path.join(refdir, reference_data["duscb"]),
+    duscb                 = reference_data["duscb"]
     contEst               = reference_data["contEst"]
     postgres_config       = os.path.join(refdir, reference_data["pg_config"])
     # Logging pipeline info
@@ -298,4 +298,4 @@ if __name__ == '__main__':
     class MuTect2Metrics(postgres.mixins.MetricsTypeMixin, postgres.utils.Base):
         __tablename__ = 'gatk3_6_mutect2_' + pipeline + '_cwl_metrics'
     # Run pipeline
-    run_pipeline(args, MuTectStatus, MuTectMetrics)
+    run_pipeline(args, MuTect2Status, MuTect2Metrics)
