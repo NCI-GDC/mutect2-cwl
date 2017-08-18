@@ -37,7 +37,7 @@ sudo chown ubuntu:ubuntu $basedir
 
 cd $basedir
 
-sudo git clone -b feat/develop $repository mutect2_cwl
+sudo git clone $repository mutect2_cwl
 sudo chown ubuntu:ubuntu -R mutect2_cwl
 
 trap cleanup EXIT
