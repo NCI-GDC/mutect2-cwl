@@ -13,7 +13,7 @@ import utils.pipeline
 import datetime
 import socket
 import json
-
+import glob
 import postgres.status
 import postgres.utils
 import postgres.mixins
@@ -236,7 +236,7 @@ def run_pipeline(args, statusclass, metricsclass):
                "--tmp-outdir-prefix", workdir,
                args.sort,
                sort_json]
-    sort_exit = utils.pipeline.run_command(sump_sort_cmd, logger)
+    sort_exit = utils.pipeline.run_command(sort_cmd, logger)
     cwl_exit.append(sort_exit)
     # Compress the outputs and CWL logs
     os.chdir(jobdir)
