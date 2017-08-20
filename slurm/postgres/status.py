@@ -57,7 +57,7 @@ def get_pon_case(engine, input_table, status_table, input_primary_column="id"):
         state = Table(status_table, meta, autoload=True)
         mapper(State, state)
         for row in cases:
-            completed = session.query(State).filter(State.normal_gdc_id == row.gdc_id).all()
+            completed = session.query(State).filter(State.normal_gdc_id == row.normal_gdc_id).all()
             rexecute = True
             for comp_case in completed:
                 if not comp_case == None:
