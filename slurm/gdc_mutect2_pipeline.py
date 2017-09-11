@@ -241,7 +241,7 @@ def run_pipeline(args, statusclass, metricsclass):
             # Exit
             sys.exit(download_exit_code)
         else:
-            logger.info("Download successfully. Normal bam is %s, and tumor bam is %s." % (normal_bam, tumor_bam))
+            logger.info("Download successfully. Tumor bam is %s." % (tumor_bam))
         # Build index
         tumor_bam_index_cmd = ['samtools', 'index', tumor_bam]
         index_exit = utils.pipeline.run_command(tumor_bam_index_cmd, logger)
