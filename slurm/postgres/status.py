@@ -71,6 +71,39 @@ def get_pon_case(engine, input_table, status_table, input_primary_column="id"):
                 count += 1
     return s
 
+def get_tumor_case(engine, input_table, status_table, input_primary_column="id"):
+    Session = sessionmaker()
+    Session.configure(bind=engine)
+    session = Session()
+    meta = MetaData(engine)
+    #read the input table
+    data = Table(input_table, meta, Column(input_primary_column, String, primary_key=True), autoload=True)
+    mapper(Files, data)
+    count = 0
+    s = dict()
+    cases = session.query(Files).all()
+    if status_table == "None":
+        for row in cases:
+            s[count] = [row.new_tumor_gdc_id,
+                        row.tumor_bam_location]
+            count += 1
+    else:
+        #read the status table
+        state = Table(status_table, meta, autoload=True)
+        mapper(State, state)
+        for row in cases:
+            completed = session.query(State).filter(State.tumor_gdc_id == row.new_tumor_gdc_id).all()
+            rexecute = True
+            for comp_case in completed:
+                if not comp_case == None:
+                    if comp_case.status == 'COMPLETED':
+                        rexecute = False
+            if rexecute:
+                s[count] = [row.new_tumor_gdc_id,
+                            row.tumor_bam_location]
+                count += 1
+    return s
+
 def get_mutect2_case(engine, input_table, status_table, input_primary_column="id"):
     Session = sessionmaker()
     Session.configure(bind=engine)

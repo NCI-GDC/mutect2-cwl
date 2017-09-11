@@ -24,7 +24,7 @@ if __name__ == "__main__":
     required.add_argument('--java_heap', help='Java heap mem', required=True)
     required.add_argument("--postgres_config", help="Path to postgres config file", required=True)
     required.add_argument("--outdir", default="./", help="Output directory for slurm scripts")
-    required.add_argument("--pipeline", choices=['vc', 'pon'], help="Calling mutect2 on tumor normal pair or creating pon on normal", required=True)
+    required.add_argument("--pipeline", choices=['vc', 'pon', 'tumor_only'], help="Calling mutect2 or creating pon on normal", required=True)
     required.add_argument("--input_table", help="Postgres input table name", required=True)
     required.add_argument("--input_primary_id", default="id", help="Primary id for postgres input table")
     required.add_argument("--status_table", default="None", help="Postgres status table name")
@@ -139,5 +139,56 @@ if __name__ == "__main__":
                 slurm.write(line)
             slurm.close()
             temp.close()
+    elif args.pipeline == 'tumor_only':
+        engine = postgres.utils.get_db_engine(args.postgres_config)
+        cases = postgres.status.get_pon_case(engine, str(args.input_table), str(args.status_table), input_primary_column=str(args.input_primary_id))
+        for case in cases:
+            tumor_s3 = utils.s3.check_s3url(cases[case][2])
+            slurm = open(os.path.join(args.outdir, "%s.%s.sh" %(args.pipeline, cases[case][0])), "w")
+            template = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+            "etc/template.sh")
+            temp = open(template, "r")
+            for line in temp:
+                if "XX_THREAD_COUNT_XX" in line:
+                    line = line.replace("XX_THREAD_COUNT_XX", str(args.thread_count))
+                if "XX_MEM_XX" in line:
+                    line = line.replace("XX_MEM_XX", str(args.mem))
+                if "XX_CASEID_XX" in line:
+                    line = line.replace("XX_CASEID_XX", str(cases[case][0]))
+                if "XX_TID_XX" in line:
+                    line = line.replace("XX_TID_XX", str(cases[case][0]))
+                if "XX_NID_XX" in line:
+                    line = line.replace("XX_NID_XX", "None")
+                if "XX_FILESIZE_XX" in line:
+                    line = line.replace("XX_FILESIZE_XX", "None")
+                if "XX_TS3URL_XX" in line:
+                    line = line.replace("XX_TS3URL_XX", tumor_s3['s3url'])
+                if "XX_TS3PROFILE_XX" in line:
+                    line = line.replace("XX_TS3PROFILE_XX", tumor_s3['profile'])
+                if "XX_TS3ENDPOINT_XX" in line:
+                    line = line.replace("XX_TS3ENDPOINT_XX", tumor_s3['endpoint'])
+                if "XX_NS3URL_XX" in line:
+                    line = line.replace("XX_NS3URL_XX", "None")
+                if "XX_NS3PROFILE_XX" in line:
+                    line = line.replace("XX_NS3PROFILE_XX", "None")
+                if "XX_NS3ENDPOINT_XX" in line:
+                    line = line.replace("XX_NS3ENDPOINT_XX", "None")
+                if "XX_PIPELINE_XX" in line:
+                    line = line.replace("XX_PIPELINE_XX", args.pipeline)
+                if "XX_REFDIR_XX" in line:
+                    line = line.replace("XX_REFDIR_XX", args.refdir)
+                if "XX_S3DIR_XX" in line:
+                    line = line.replace("XX_S3DIR_XX", upload_s3['s3url'])
+                if "XX_S3PROFILE_XX" in line:
+                    line = line.replace("XX_S3PROFILE_XX", upload_s3['profile'])
+                if "XX_S3ENDPOINT_XX" in line:
+                    line = line.replace("XX_S3ENDPOINT_XX", upload_s3['endpoint'])
+                if "XX_BLOCKSIZE_XX" in line:
+                    line = line.replace("XX_BLOCKSIZE_XX", str(args.block))
+                if "XX_JAVAHEAP_XX" in line:
+                    line = line.replace("XX_JAVAHEAP_XX", args.java_heap)
+                slurm.write(line)
+            slurm.close()
+            temp.close()
     else:
-        raise Exception("Cannot get correct pipeline: %s. Please choose between 'mutect2' or 'pon'." % args.pipeline)
+        raise Exception("Cannot get correct pipeline: %s. Please choose between 'mutect2' or 'pon' or 'tumor_only'." % args.pipeline)

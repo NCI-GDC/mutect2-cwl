@@ -48,7 +48,7 @@ def get_args():
     required.add_argument("--n_s3_profile", required=True, help="S3 profile name for project tenant.")
     required.add_argument("--n_s3_endpoint", required=True, help="S3 endpoint url for project tenant.")
     # Parameters for pipeline
-    required.add_argument("--pipeline", choices=['vc', 'pon'], help="Calling mutect2 on tumor normal pair or creating pon on normal", required=True)
+    required.add_argument("--pipeline", choices=['vc', 'pon', 'tumor_only'], help="Calling mutect2 on tumor normal pair or creating pon on normal", required=True)
     required.add_argument("--basedir", default="/mnt/SCRATCH/", help="Base directory for computations.")
     required.add_argument("--refdir", required=True, help="Path to reference directory.")
     required.add_argument("--cwl", required=True, help="Path to CWL workflow yaml.")
@@ -162,7 +162,7 @@ def run_pipeline(args, statusclass, metricsclass):
                 json.dump(input_json_data, o, indent=4)
             input_json_list.append(input_json_file)
         logger.info("Preparing input json")
-    else:
+    elif args.pipeline == 'vc':
         # Download input
         normal_bam = os.path.join(inputdir, os.path.basename(args.normal_s3_url))
         normal_download_cmd = " ".join(utils.s3.aws_s3_get(logger, args.normal_s3_url, inputdir,
@@ -221,6 +221,57 @@ def run_pipeline(args, statusclass, metricsclass):
                 json.dump(input_json_data, o, indent=4)
             input_json_list.append(input_json_file)
         logger.info("Preparing input json")
+    elif args.pipeline == 'tumor_only':
+        # Download input
+        tumor_bam = os.path.join(inputdir, os.path.basename(args.tumor_s3_url))
+        tumor_download_cmd = utils.s3.aws_s3_get(logger, args.tumor_s3_url, inputdir,
+                                                 args.t_s3_profile, args.t_s3_endpoint, recursive=False))
+        download_exit = utils.pipeline.run_command(tumor_download_cmd,logger)
+        download_end_time = time.time()
+        download_time = download_end_time - cwl_start
+        if download_exit != 0:
+            cwl_elapsed = download_time
+            datetime_end = str(datetime.datetime.now())
+            engine = postgres.utils.get_db_engine(postgres_config)
+            postgres.utils.set_download_error(download_exit, logger, engine,
+                                              args.case_id, args.tumor_gdc_id, args.normal_gdc_id, output_id,
+                                              datetime_start, datetime_end,
+                                              hostname, cwl_version, docker_version,
+                                              download_time, cwl_elapsed, statusclass, metricsclass)
+            # Exit
+            sys.exit(download_exit_code)
+        else:
+            logger.info("Download successfully. Normal bam is %s, and tumor bam is %s." % (normal_bam, tumor_bam))
+        # Build index
+        tumor_bam_index_cmd = ['samtools', 'index', tumor_bam]
+        index_exit = utils.pipeline.run_command(tumor_bam_index_cmd, logger)
+        if index_exit != 0:
+            logger.info("Failed to build bam index.")
+            sys.exit(index_exit)
+        else:
+            tumor_bam_index = utils.pipeline.get_index(logger, inputdir, tumor_bam)
+        # Create input json
+        input_json_list = []
+        for i, block in enumerate(utils.pipeline.fai_chunk(reference_fasta_fai, args.block)):
+            input_json_file = os.path.join(jsondir, '{0}.{4}.{1}.{2}.{3}.mutect2.calling.inputs.json'.format(str(output_id), block[0], block[1], block[2], i))
+            input_json_data = {
+            "java_heap": args.java_heap,
+            "ref": {"class": "File", "path": reference_fasta_path},
+            "region": "{0}:{1}-{2}".format(block[0], block[1], block[2]),
+            "tumor_bam": {"class": "File", "path": tumor_bam},
+            "pon": {"class": "File", "path": pon_path},
+            "cosmic": {"class": "File", "path": cosmic_path},
+            "dbsnp": {"class": "File", "path": known_snp_vcf_path},
+            "cont": contEst,
+            "output_name": '{}_{}_{}.calling.vcf.gz'.format(block[0], block[1], block[2]),
+            "duscb": duscb
+            }
+            with open(input_json_file, 'wt') as o:
+                json.dump(input_json_data, o, indent=4)
+            input_json_list.append(input_json_file)
+        logger.info("Preparing input json")
+    else:
+        raise Exception("Cannot get correct pipeline: {}. Please choose between 'mutect2' or 'pon' or 'tumor_only'.".format(args.pipeline))
     # Run CWL
     os.chdir(workdir)
     logger.info('Running CWL workflow')
