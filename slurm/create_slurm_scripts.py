@@ -143,7 +143,7 @@ if __name__ == "__main__":
         engine = postgres.utils.get_db_engine(args.postgres_config)
         cases = postgres.status.get_tumor_case(engine, str(args.input_table), str(args.status_table), input_primary_column=str(args.input_primary_id))
         for case in cases:
-            tumor_s3 = utils.s3.check_s3url(cases[case][2])
+            tumor_s3 = utils.s3.check_s3url(cases[case][1])
             slurm = open(os.path.join(args.outdir, "%s.%s.sh" %(args.pipeline, cases[case][0])), "w")
             template = os.path.join(os.path.dirname(os.path.realpath(__file__)),
             "etc/template.sh")
