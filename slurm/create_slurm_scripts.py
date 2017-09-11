@@ -141,7 +141,7 @@ if __name__ == "__main__":
             temp.close()
     elif args.pipeline == 'tumor_only':
         engine = postgres.utils.get_db_engine(args.postgres_config)
-        cases = postgres.status.get_pon_case(engine, str(args.input_table), str(args.status_table), input_primary_column=str(args.input_primary_id))
+        cases = postgres.status.get_tumor_case(engine, str(args.input_table), str(args.status_table), input_primary_column=str(args.input_primary_id))
         for case in cases:
             tumor_s3 = utils.s3.check_s3url(cases[case][2])
             slurm = open(os.path.join(args.outdir, "%s.%s.sh" %(args.pipeline, cases[case][0])), "w")
