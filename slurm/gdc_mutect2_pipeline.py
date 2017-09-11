@@ -225,7 +225,7 @@ def run_pipeline(args, statusclass, metricsclass):
         # Download input
         tumor_bam = os.path.join(inputdir, os.path.basename(args.tumor_s3_url))
         tumor_download_cmd = utils.s3.aws_s3_get(logger, args.tumor_s3_url, inputdir,
-                                                 args.t_s3_profile, args.t_s3_endpoint, recursive=False))
+                                                 args.t_s3_profile, args.t_s3_endpoint, recursive=False)
         download_exit = utils.pipeline.run_command(tumor_download_cmd,logger)
         download_end_time = time.time()
         download_time = download_end_time - cwl_start
