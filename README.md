@@ -1,17 +1,3 @@
-GDC MuTect2 (GATK3.6, nightly-2016-02-25-gf39d340) pipeline
+GDC MuTect2 (GATK3.6, nightly-2016-02-25-gf39d340) CWL submodule
 ---
-Python Wrapper
-
-```
-/home/ubuntu/.virtualenvs/p2/bin/python slurm/gdc_mutect2_pipeline.py -h
-```
-
-CWL
-
-```
-/home/ubuntu/.virtualenvs/p2/bin/cwltool tools/
-```
-
-Docker
-
-Dockerfiles for CWL tools could be found at `docker/`
+This branch serves as a git submodule for https://github.com/NCI-GDC/gdc-somatic-variant-calling-workflow.git.
