@@ -5,7 +5,6 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-  - $import: ../envvar-global.cwl
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
     dockerPull: quay.io/ncigdc/mutect2-tool:nightly-2016-02-25-gf39d340
