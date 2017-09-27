@@ -8,6 +8,5 @@
   "contEst": "0.02",
   "duscb": false,
   "pg_config": "postgres_config",
-  "cwl_version": "1.0.20170718140316",
   "docker_version": ["quay.io/ncigdc/mutect2-tool:nightly-2016-02-25-gf39d340", "quay.io/shenglai/picard-sortvcf-tool:1.0a"]
 }

@@ -17,6 +17,7 @@ import glob
 import postgres.status
 import postgres.utils
 import postgres.mixins
+import pkg_resources
 
 from sqlalchemy.exc import NoSuchTableError
 
@@ -109,7 +110,7 @@ def run_pipeline(args, statusclass, metricsclass):
     contEst               = reference_data["contEst"]
     postgres_config       = os.path.join(refdir, reference_data["pg_config"])
     # Logging pipeline info
-    cwl_version    = reference_data["cwl_version"]
+    cwl_version    = pkg_resources.get_distribution("cwltool").version
     docker_version = reference_data["docker_version"]
     logger.info("cwl_version: %s" % (cwl_version))
     logger.info("docker_version: %s" % (docker_version))
