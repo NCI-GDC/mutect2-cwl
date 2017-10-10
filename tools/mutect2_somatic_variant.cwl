@@ -13,6 +13,7 @@ inputs:
 
   - id: java_heap
     type: string
+    default: '3G'
     doc: Java heap memory.
     inputBinding:
       position: 2
@@ -30,11 +31,11 @@ inputs:
       - '^.dict'
 
   - id: region
-    type: string
+    type: File
     doc: Region used for scattering.
     inputBinding:
-      position: 9
-      prefix: '-L'
+      loadContents: true
+      valueFrom: $(null)
 
   - id: tumor_bam
     type: File
@@ -43,7 +44,7 @@ inputs:
       position: 10
       prefix: '-I:tumor'
     secondaryFiles:
-      - '^.bai'
+      - '.bai'
 
   - id: normal_bam
     type: File
@@ -52,7 +53,7 @@ inputs:
       position: 11
       prefix: '-I:normal'
     secondaryFiles:
-      - '^.bai'
+      - '.bai'
 
   - id: pon
     type: File
@@ -82,18 +83,12 @@ inputs:
       - '.tbi'
 
   - id: cont
-    type: string
+    type: float
+    default: 0.02
     doc: Contamination estimation score.
     inputBinding:
       position: 15
       prefix: '--contamination_fraction_to_filter'
-
-  - id: output_name
-    type: string
-    doc: Output file name.
-    inputBinding:
-      position: 16
-      prefix: '-o'
 
   - id: duscb
     type: boolean
@@ -104,10 +99,10 @@ inputs:
       prefix: '--dontUseSoftClippedBases'
 
 outputs:
-  - id: output_file
+  - id: MUTECT2_OUTPUT
     type: File
     outputBinding:
-      glob: $(inputs.output_name)
+      glob: $(inputs.region.contents.replace(/\n/g, '').replace(/\t/g, '_') + '.mutect2.vcf.gz')
     secondaryFiles:
       - '.tbi'
 
@@ -127,6 +122,12 @@ arguments:
   - valueFrom: '1'
     prefix: '-nt'
     position: 7
+  - valueFrom: $(inputs.region.contents.replace(/\n/g, '').replace(/\t/, ':').replace(/\t/, '-'))
+    prefix: '-L'
+    position: 9
+  - valueFrom: $(inputs.region.contents.replace(/\n/g, '').replace(/\t/g, '_') + '.mutect2.vcf.gz')
+    prefix: '-o'
+    position: 16
   - valueFrom: 'EMIT_VARIANTS_ONLY'
     prefix: '--output_mode'
     position: 17
