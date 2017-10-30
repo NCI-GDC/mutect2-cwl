@@ -9,7 +9,8 @@ requirements:
   - class: DockerRequirement
     dockerPull: quay.io/ncigdc/mutect2-tool:nightly-2016-02-25-gf39d340
   - class: ResourceRequirement
-  
+    coresMax: 1
+
 inputs:
 
   - id: java_heap
