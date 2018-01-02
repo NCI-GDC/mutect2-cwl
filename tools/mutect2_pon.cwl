@@ -10,10 +10,10 @@ requirements:
     dockerPull: quay.io/ncigdc/mutect2-tool:nightly-2016-02-25-gf39d340
   - class: ResourceRequirement
     coresMax: 1
-    
+
 inputs:
 
-  - id: java_heap
+  java_heap:
     type: string
     doc: Java heap memory.
     inputBinding:
@@ -21,7 +21,7 @@ inputs:
       prefix: '-Xmx'
       separate: false
 
-  - id: ref
+  ref:
     type: File
     doc: Reference fasta file.
     inputBinding:
@@ -31,14 +31,14 @@ inputs:
       - '.fai'
       - '^.dict'
 
-  - id: region
+  region:
     type: string
     doc: Region used for scattering.
     inputBinding:
       position: 9
       prefix: '-L'
 
-  - id: normal_bam
+  normal_bam:
     type: File
     doc: Normal bam file.
     inputBinding:
@@ -47,7 +47,7 @@ inputs:
     secondaryFiles:
       - '^.bai'
 
-  - id: cosmic
+  cosmic:
     type: File
     doc: Cosmic reference file path.
     inputBinding:
@@ -56,7 +56,7 @@ inputs:
     secondaryFiles:
       - '.tbi'
 
-  - id: dbsnp
+  dbsnp:
     type: File
     doc: dbSNP reference file path.
     inputBinding:
@@ -65,21 +65,21 @@ inputs:
     secondaryFiles:
       - '.tbi'
 
-  - id: cont
+  cont:
     type: string
     doc: Contamination estimation score.
     inputBinding:
       position: 13
       prefix: '--contamination_fraction_to_filter'
 
-  - id: output_name
+  output_name:
     type: string
     doc: Output file name.
     inputBinding:
       position: 14
       prefix: '-o'
 
-  - id: duscb
+  duscb:
     type: boolean
     doc: Whether to use soft clipped bases, default is False.
     default: false
@@ -88,7 +88,7 @@ inputs:
       prefix: '--dontUseSoftClippedBases'
 
 outputs:
-  - id: output_file
+  output_file:
     type: File
     outputBinding:
       glob: $(inputs.output_name)

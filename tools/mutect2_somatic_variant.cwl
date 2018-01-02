@@ -13,7 +13,7 @@ requirements:
 
 inputs:
 
-  - id: java_heap
+  java_heap:
     type: string
     default: '3G'
     doc: Java heap memory.
@@ -22,7 +22,7 @@ inputs:
       prefix: '-Xmx'
       separate: false
 
-  - id: ref
+  ref:
     type: File
     doc: Reference fasta file.
     inputBinding:
@@ -32,14 +32,14 @@ inputs:
       - '.fai'
       - '^.dict'
 
-  - id: region
+  region:
     type: File
     doc: Region used for scattering.
     inputBinding:
       loadContents: true
       valueFrom: $(null)
 
-  - id: tumor_bam
+  tumor_bam:
     type: File
     doc: Tumor bam file.
     inputBinding:
@@ -48,7 +48,7 @@ inputs:
     secondaryFiles:
       - '.bai'
 
-  - id: normal_bam
+  normal_bam:
     type: File
     doc: Normal bam file.
     inputBinding:
@@ -57,7 +57,7 @@ inputs:
     secondaryFiles:
       - '.bai'
 
-  - id: pon
+  pon:
     type: File
     doc: Panel of normal reference file path.
     inputBinding:
@@ -66,7 +66,7 @@ inputs:
     secondaryFiles:
       - '.tbi'
 
-  - id: cosmic
+  cosmic:
     type: File
     doc: Cosmic reference file path.
     inputBinding:
@@ -75,7 +75,7 @@ inputs:
     secondaryFiles:
       - '.tbi'
 
-  - id: dbsnp
+  dbsnp:
     type: File
     doc: dbSNP reference file path.
     inputBinding:
@@ -84,7 +84,7 @@ inputs:
     secondaryFiles:
       - '.tbi'
 
-  - id: cont
+  cont:
     type: float
     default: 0.02
     doc: Contamination estimation score.
@@ -92,7 +92,7 @@ inputs:
       position: 15
       prefix: '--contamination_fraction_to_filter'
 
-  - id: duscb
+  duscb:
     type: boolean
     doc: Whether to use soft clipped bases, default is False.
     default: false
@@ -101,7 +101,7 @@ inputs:
       prefix: '--dontUseSoftClippedBases'
 
 outputs:
-  - id: MUTECT2_OUTPUT
+  MUTECT2_OUTPUT:
     type: File
     outputBinding:
       glob: $(inputs.region.contents.replace(/\n/g, '').replace(/\t/g, '_') + '.mutect2.vcf.gz')
