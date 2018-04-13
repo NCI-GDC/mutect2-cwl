@@ -6,4 +6,4 @@ RUN apt-get update -y && \
 ADD multi_mutect2.py /bin/
 ADD GenomeAnalysisTK.jar /bin/
 
-ENV multi_mutect2 v1.0
+ENV multi_mutect2 v1.2
