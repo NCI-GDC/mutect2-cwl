@@ -7,7 +7,7 @@ class: CommandLineTool
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/multi_mutect2:1.2
+    dockerPull: quay.io/ncigdc/multi_mutect2:1.3
 
 inputs:
 
@@ -105,10 +105,8 @@ inputs:
 
 outputs:
   MUTECT2_OUTPUT:
-    type: File[]
+    type: File
     outputBinding:
-      glob: '*.mt2.vcf.gz'
-    secondaryFiles:
-      - '.tbi'
+      glob: 'multi_mutect2_merged.vcf'
 
 baseCommand: ['python', '/bin/multi_mutect2.py']
