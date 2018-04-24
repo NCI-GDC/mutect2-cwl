@@ -47,9 +47,9 @@ def get_region(intervals):
 def cmd_template(java_heap, gatk_path, ref, region, tumor_bam, normal_bam, pon, cosmic, dbsnp, contamination, mode):
     '''cmd template'''
     if not mode:
-        template = string.Template("java -Djava.io.tmpdir=/tmp/job_tmp_${BLOCK_NUM} -d64 -jar -Xmx${JAVA_HEAP} -XX:+UseSerialGC ${GATK_PATH} -T MuTect2 -nct 1 -nt 1 -R ${REF} -L ${REGION} -I:tumor ${TUMOR_BAM} -I:normal ${NORMAL_BAM} --normal_panel ${PON} --cosmic ${COSMIC} --dbsnp ${DBSNP} --contamination_fraction_to_filter ${CONTAMINATION} -o ${BLOCK_NUM}.mt2.vcf.gz --output_mode EMIT_VARIANTS_ONLY --disable_auto_index_creation_and_locking_when_reading_rods")
+        template = string.Template("java -Djava.io.tmpdir=/tmp/job_tmp_${BLOCK_NUM} -d64 -jar -Xmx${JAVA_HEAP} -XX:+UseSerialGC ${GATK_PATH} -T MuTect2 -nct 1 -nt 1 -R ${REF} -L ${REGION} -I:tumor ${TUMOR_BAM} -I:normal ${NORMAL_BAM} --normal_panel ${PON} --cosmic ${COSMIC} --dbsnp ${DBSNP} --contamination_fraction_to_filter ${CONTAMINATION} -o ${BLOCK_NUM}.mt2.vcf --output_mode EMIT_VARIANTS_ONLY --disable_auto_index_creation_and_locking_when_reading_rods")
     else:
-        template = string.Template("java -Djava.io.tmpdir=/tmp/job_tmp_${BLOCK_NUM} -d64 -jar -Xmx${JAVA_HEAP} -XX:+UseSerialGC ${GATK_PATH} -T MuTect2 -nct 1 -nt 1 -R ${REF} -L ${REGION} -I:tumor ${TUMOR_BAM} -I:normal ${NORMAL_BAM} --normal_panel ${PON} --cosmic ${COSMIC} --dbsnp ${DBSNP} --contamination_fraction_to_filter ${CONTAMINATION} -o ${BLOCK_NUM}.mt2.vcf.gz --output_mode EMIT_VARIANTS_ONLY --disable_auto_index_creation_and_locking_when_reading_rods --dontUseSoftClippedBases")
+        template = string.Template("java -Djava.io.tmpdir=/tmp/job_tmp_${BLOCK_NUM} -d64 -jar -Xmx${JAVA_HEAP} -XX:+UseSerialGC ${GATK_PATH} -T MuTect2 -nct 1 -nt 1 -R ${REF} -L ${REGION} -I:tumor ${TUMOR_BAM} -I:normal ${NORMAL_BAM} --normal_panel ${PON} --cosmic ${COSMIC} --dbsnp ${DBSNP} --contamination_fraction_to_filter ${CONTAMINATION} -o ${BLOCK_NUM}.mt2.vcf --output_mode EMIT_VARIANTS_ONLY --disable_auto_index_creation_and_locking_when_reading_rods --dontUseSoftClippedBases")
     for i, interval in enumerate(region):
         cmd = template.substitute(
             dict(
@@ -66,7 +66,7 @@ def cmd_template(java_heap, gatk_path, ref, region, tumor_bam, normal_bam, pon, 
                 CONTAMINATION=contamination
             )
         )
-        yield cmd
+        yield cmd, '{}.mt2.vcf'.format(i)
 
 def main():
     '''main'''
@@ -102,6 +102,14 @@ def main():
         print('Failed multi_mutect2')
     else:
         print('Completed multi_mutect2')
+        first = True
+        with open('multi_mutect2_merged.vcf', 'w') as oh:
+            for cmd, out in mutect2_cmds:
+                with open(out) as fh:
+                    for line in fh:
+                        if first or not line.startswith('#'):
+                            oh.write(line)
+                first = False
 
 if __name__ == '__main__':
     main()
