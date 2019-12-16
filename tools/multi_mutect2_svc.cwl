@@ -1,13 +1,12 @@
-#!/usr/bin/env cwl-runner
-
-cwlVersion: v1.0
-
 class: CommandLineTool
-
+cwlVersion: v1.0
+id: multi_mutect2_svc
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/multi_mutect2:1.3
+    dockerPull: quay.io/ncigdc/multi_mutect2:1.4
+doc: |
+  Multithreading on GATK3.6 MuTect2 function.
 
 inputs:
 
@@ -109,4 +108,4 @@ outputs:
     outputBinding:
       glob: 'multi_mutect2_merged.vcf'
 
-baseCommand: ['python', '/bin/multi_mutect2.py']
+baseCommand: ['python', '/opt/multi_mutect2.py']

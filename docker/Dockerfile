@@ -1,16 +1,9 @@
-FROM quay.io/jeremiahsavage/cdis_base
+FROM ubuntu:16.04
+LABEL maintainer="sli6@uchicago.edu"
+LABEL version="nightly-2016-02-25-gf39d340"
+LABEL description="GATK3 nightly-2016-02-25-gf39d340"
 
-MAINTAINER Shenglai Li <sli6@uchicago.edu>
+RUN apt-get update -y && \
+    apt-get install -y python-pip python-dev openjdk-8-jre-headless
 
-USER root
-RUN apt-get update && apt-get install -y --force-yes \
-    openjdk-8-jre-headless
-
-USER ubuntu
-ENV HOME /home/ubuntu
-
-ENV mutect2-tool nightly-2016-02-25-gf39d340
-
-ADD GenomeAnalysisTK.jar ${HOME}/tools/
-
-WORKDIR ${HOME}
+ADD GenomeAnalysisTK.jar /opt/
