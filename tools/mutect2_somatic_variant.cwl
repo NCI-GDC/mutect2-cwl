@@ -1,15 +1,15 @@
-#!/usr/bin/env cwl-runner
-
-cwlVersion: v1.0
-
 class: CommandLineTool
-
+cwlVersion: v1.0
+id: mutect2_somatic_variant
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
     dockerPull: quay.io/ncigdc/gatk3:nightly-2016-02-25-gf39d340
   - class: ResourceRequirement
     coresMax: 1
+doc: |
+  GATK3.6 MuTect2. The `region` flag takes a file that contains one line of region.
+  This tool is used in downstream CWL `scatter/chunking` workflow.
 
 inputs:
 

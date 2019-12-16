@@ -1,15 +1,14 @@
-#!/usr/bin/env cwl-runner
-
-cwlVersion: v1.0
-
 class: CommandLineTool
-
+cwlVersion: v1.0
+id: mutect2_tumor_only_calling
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
     dockerPull: quay.io/ncigdc/gatk3:nightly-2016-02-25-gf39d340
   - class: ResourceRequirement
     coresMax: 1
+doc: |
+  GATK3.6 MuTect2 tumor only calling.
 
 inputs:
 
