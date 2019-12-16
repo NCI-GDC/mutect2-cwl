@@ -1,26 +1,28 @@
-#!/usr/bin/env cwl-runner
-
-cwlVersion: v1.0
-
 class: CommandLineTool
-
+cwlVersion: v1.0
+id: mutect2_somatic_variant.no_chunk
 requirements:
-  - $import: ../envvar-global.cwl
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/mutect2-tool:nightly-2016-02-25-gf39d340
+    dockerPull: quay.io/ncigdc/gatk3:nightly-2016-02-25-gf39d340
+  - class: ResourceRequirement
+    coresMax: 1
+doc: |
+  GATK3.6 MuTect2. The `region` flag is optional and it works as `-L` in `MuTect2`.
+  This tool is used in downstream CWL `no_chunk` workflow.
 
 inputs:
 
-  - id: java_heap
+  java_heap:
     type: string
+    default: '3G'
     doc: Java heap memory.
     inputBinding:
       position: 2
       prefix: '-Xmx'
       separate: false
 
-  - id: ref
+  ref:
     type: File
     doc: Reference fasta file.
     inputBinding:
@@ -30,67 +32,79 @@ inputs:
       - '.fai'
       - '^.dict'
 
-  - id: region
-    type: string
+  region:
+    type: File?
     doc: Region used for scattering.
     inputBinding:
+      prefix: -L
       position: 9
-      prefix: '-L'
 
-  - id: normal_bam
+  tumor_bam:
     type: File
-    doc: Normal bam file.
+    doc: Tumor bam file.
     inputBinding:
       position: 10
       prefix: '-I:tumor'
     secondaryFiles:
-      - '^.bai'
+      - '.bai'
 
-  - id: cosmic
+  normal_bam:
+    type: File
+    doc: Normal bam file.
+    inputBinding:
+      position: 11
+      prefix: '-I:normal'
+    secondaryFiles:
+      - '.bai'
+
+  pon:
+    type: File
+    doc: Panel of normal reference file path.
+    inputBinding:
+      position: 12
+      prefix: '--normal_panel'
+    secondaryFiles:
+      - '.tbi'
+
+  cosmic:
     type: File
     doc: Cosmic reference file path.
     inputBinding:
-      position: 11
+      position: 13
       prefix: '--cosmic'
     secondaryFiles:
       - '.tbi'
 
-  - id: dbsnp
+  dbsnp:
     type: File
     doc: dbSNP reference file path.
     inputBinding:
-      position: 12
+      position: 14
       prefix: '--dbsnp'
     secondaryFiles:
       - '.tbi'
 
-  - id: cont
-    type: string
+  cont:
+    type: float
+    default: 0.02
     doc: Contamination estimation score.
     inputBinding:
-      position: 13
+      position: 15
       prefix: '--contamination_fraction_to_filter'
 
-  - id: output_name
-    type: string
-    doc: Output file name.
-    inputBinding:
-      position: 14
-      prefix: '-o'
-
-  - id: duscb
+  duscb:
     type: boolean
     doc: Whether to use soft clipped bases, default is False.
     default: false
     inputBinding:
-      position: 18
+      position: 19
       prefix: '--dontUseSoftClippedBases'
 
 outputs:
-  - id: output_file
+  MUTECT2_OUTPUT:
     type: File
     outputBinding:
-      glob: $(inputs.output_name)
+      glob: 'chunk.mutect2.vcf.gz'
     secondaryFiles:
       - '.tbi'
 
@@ -110,10 +124,11 @@ arguments:
   - valueFrom: '1'
     prefix: '-nt'
     position: 7
+  - valueFrom: $('chunk.mutect2.vcf.gz')
+    prefix: '-o'
+    position: 16
   - valueFrom: 'EMIT_VARIANTS_ONLY'
     prefix: '--output_mode'
-    position: 15
-  - valueFrom: '--disable_auto_index_creation_and_locking_when_reading_rods'
-    position: 16
-  - valueFrom: '--artifact_detection_mode'
     position: 17
+  - valueFrom: '--disable_auto_index_creation_and_locking_when_reading_rods'
+    position: 18
