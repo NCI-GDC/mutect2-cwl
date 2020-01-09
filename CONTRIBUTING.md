@@ -1,5 +1,24 @@
 - [Development Practices](#development-practices)
+  - [Git Templates](#git-templates)
+  - [Feature Pattern](#feature-pattern)
+  - [Page Object Pattern](#page-object-pattern)
 - [Version Control](#version-control)
+  - [Branches](#branches)
+  - [Commits](#commits)
+  - [Code Review](#code-review)
+  - [Rebase](#rebase)
+  - [Merge Branch](#merge-branch)
+  - [Tags](#tags)
+  - [Signed Commits](#signed-commits)
+    - [Generating a PGP Key](#generating-a-pgp-key)
+    - [Adding a maintainer key](#adding-a-maintainer-key)
+  - [Master Branch](#master-branch)
+  - [Release](#release)
+    - [Version Schema](#version-schema)
+    - [Prepare release](#prepare-release)
+    - [Publish release](#publish-release)
+    - [Start next release](#start-next-release)
+  - [Workflow](#workflow)
 
 # Development Practices
 - [Git Templates](#git-templates)
@@ -32,16 +51,27 @@ Page Object pattern can simplify testing
 
 # Version Control
 
-- [Branches](#branches)
-- [Commits](#commits)
-- [Code Review](#code-review)
-- [Rebase](#rebase)
-- [Merge Branch](#merge-branch)
-- [Tags](#tags)
-- [Signed Commits](#signed-commits)
-- [Master Branch](#master-branch)
-- [Release](#release)
-- [Workflow](#workflow)
+- [Development Practices](#development-practices)
+  - [Git Templates](#git-templates)
+  - [Feature Pattern](#feature-pattern)
+  - [Page Object Pattern](#page-object-pattern)
+- [Version Control](#version-control)
+  - [Branches](#branches)
+  - [Commits](#commits)
+  - [Code Review](#code-review)
+  - [Rebase](#rebase)
+  - [Merge Branch](#merge-branch)
+  - [Tags](#tags)
+  - [Signed Commits](#signed-commits)
+    - [Generating a PGP Key](#generating-a-pgp-key)
+    - [Adding a maintainer key](#adding-a-maintainer-key)
+  - [Master Branch](#master-branch)
+  - [Release](#release)
+    - [Version Schema](#version-schema)
+    - [Prepare release](#prepare-release)
+    - [Publish release](#publish-release)
+    - [Start next release](#start-next-release)
+  - [Workflow](#workflow)
 
 ## Branches
 All development should happen on a branch not on master. Branches should formatted as `type/GDC-##-couple-words` or `type/very-short-description`.
@@ -95,7 +125,7 @@ This format is automatically checked by a pre commit git hook.
 
 ## Code Review
 
-All branches should be pushed to [Github](https://github.com/NCI-GDC/portal-ui) for code review.
+All branches should be pushed to [Github](https://github.com/NCI-GDC/mutect2-cwl) for code review.
 
 Any branches containing significant work need to be reviewed and signed-off before they can be considered complete.
 
