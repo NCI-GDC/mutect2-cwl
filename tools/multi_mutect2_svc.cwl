@@ -4,7 +4,7 @@ id: multi_mutect2_svc
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/multi_mutect2:98c1b75c6086bdf5d100abe25393236a03b625bd
+    dockerPull: quay.io/ncigdc/multi_mutect2:be207a32a668775cbb34bcb6e920ad5e6d756a79
 doc: |
   Multithreading on GATK3.6 MuTect2 function.
 
