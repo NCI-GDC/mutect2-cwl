@@ -4,7 +4,7 @@ id: multi_mutect2_svc
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/multi_mutect2:d9bf574d8008cd8a4252c7d672938a564f196cc0
+    dockerPull: quay.io/ncigdc/multi_mutect2:98c1b75c6086bdf5d100abe25393236a03b625bd
 doc: |
   Multithreading on GATK3.6 MuTect2 function.
 
@@ -108,4 +108,4 @@ outputs:
     outputBinding:
       glob: 'multi_mutect2_merged.vcf'
 
-baseCommand: ['python', '/opt/multi_mutect2.py']
+baseCommand: ['python3.7', '/opt/multi_mutect2_p3.py']
