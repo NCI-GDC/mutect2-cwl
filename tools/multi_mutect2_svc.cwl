@@ -4,7 +4,7 @@ id: multi_mutect2_svc
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/multi_mutect2:424752c607339af373928b3b8400514827a90eba
+    dockerPull: quay.io/ncigdc/mutect2-tool:1.0.0-83.926e576
 doc: |
   Multithreading on GATK3.6 MuTect2 function.
 
@@ -16,14 +16,14 @@ inputs:
     doc: Java heap memory.
     inputBinding:
       position: 2
-      prefix: '-j'
+      prefix: '--java-heap'
 
   ref:
     type: File
     doc: Reference fasta file.
     inputBinding:
       position: 8
-      prefix: '-f'
+      prefix: '--reference-path'
     secondaryFiles:
       - '.fai'
       - '^.dict'
@@ -33,14 +33,14 @@ inputs:
     doc: Region used for scattering.
     inputBinding:
       position: 9
-      prefix: '-r'
+      prefix: '--interval-bed-path'
 
   tumor_bam:
     type: File
     doc: Tumor bam file.
     inputBinding:
       position: 10
-      prefix: '-t'
+      prefix: '--tumor-bam'
     secondaryFiles:
       - '.bai'
 
@@ -49,7 +49,7 @@ inputs:
     doc: Normal bam file.
     inputBinding:
       position: 11
-      prefix: '-n'
+      prefix: '--normal-bam'
     secondaryFiles:
       - '.bai'
 
@@ -57,14 +57,14 @@ inputs:
     type: int
     inputBinding:
       position: 12
-      prefix: -c
+      prefix: '--thread-count'
 
   pon:
     type: File
     doc: Panel of normal reference file path.
     inputBinding:
       position: 13
-      prefix: '-p'
+      prefix: '--pon'
     secondaryFiles:
       - '.tbi'
 
@@ -73,7 +73,7 @@ inputs:
     doc: Cosmic reference file path.
     inputBinding:
       position: 14
-      prefix: '-s'
+      prefix: '--cosmic'
     secondaryFiles:
       - '.tbi'
 
@@ -82,7 +82,7 @@ inputs:
     doc: dbSNP reference file path.
     inputBinding:
       position: 15
-      prefix: '-d'
+      prefix: '--dbsnp'
     secondaryFiles:
       - '.tbi'
 
@@ -92,7 +92,7 @@ inputs:
     doc: Contamination estimation score.
     inputBinding:
       position: 16
-      prefix: '-e'
+      prefix: '--contest'
 
   duscb:
     type: boolean
@@ -100,7 +100,7 @@ inputs:
     default: false
     inputBinding:
       position: 17
-      prefix: '-m'
+      prefix: '--not_clipped_bases'
 
 outputs:
   MUTECT2_OUTPUT:
@@ -108,4 +108,4 @@ outputs:
     outputBinding:
       glob: 'multi_mutect2_merged.vcf'
 
-baseCommand: ['python3.7', '/opt/multi_mutect2_p3.py']
+baseCommand: ['mutect2_tool']
