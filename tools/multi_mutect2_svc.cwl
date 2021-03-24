@@ -4,7 +4,7 @@ id: multi_mutect2_svc
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/mutect2-tool:1.0.0-70.1722ca4
+    dockerPull: quay.io/ncigdc/mutect2-tool:1.0.0-70.ccea14b
 doc: |
   Multithreading on GATK3.6 MuTect2 function.
 
@@ -102,6 +102,11 @@ inputs:
       position: 17
       prefix: '--not_clipped_bases'
 
+  timeout:
+    type: int?
+    inputBinding:
+      position: 99
+      prefix: --timeout
 outputs:
   MUTECT2_OUTPUT:
     type: File
