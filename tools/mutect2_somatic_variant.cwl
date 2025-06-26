@@ -4,7 +4,7 @@ id: mutect2_somatic_variant
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: quay.io/ncigdc/gatk3:nightly-2016-02-25-gf39d340
+    dockerPull: docker.osdc.io/ncigdc/gatk:3.7-6f065cd
   - class: ResourceRequirement
     coresMax: 1
 doc: |
