@@ -4,7 +4,7 @@ id: mutect2_somatic_variant.no_chunk
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: docker.osdc.io/ncigdc/gatk:3.7-6f065cd
+    dockerPull: docker.osdc.io/ncigdc/gatk:3.7-bc63f4b
   - class: ResourceRequirement
     coresMax: 1
 doc: |
